@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062760484086",
+    "project_id": "focusbadminton",
+    "storage_bucket": "focusbadminton.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062760484086:android:ba4b0b8c1f3c4676f330d7",
+        "android_client_info": {
+          "package_name": "com.example.focusbadminton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBysbNzU4V-w992WJlnbbQO7DkSfx66KzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
