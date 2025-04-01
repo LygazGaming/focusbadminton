@@ -12,7 +12,12 @@
           "package_name": "com.example.focusbadminton"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1062760484086-rj1u5n9gps2ptcnla5baikn0rjdvdilm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBysbNzU4V-w992WJlnbbQO7DkSfx66KzE"

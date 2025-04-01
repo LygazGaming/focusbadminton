@@ -9,35 +9,52 @@ class AuthService {
   Future<UserCredential?> loginWithGoogle() async {
     try {
       log('Bắt đầu đăng nhập với Google');
-      final googleUser = await GoogleSignIn().signIn();
+
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: ['email'],
+        signInOption: SignInOption.standard,
+      ).signIn();
 
       if (googleUser == null) {
         log('Người dùng hủy đăng nhập Google');
         return null;
       }
 
-      final googleAuth = await googleUser.authentication;
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
       if (googleAuth.idToken == null) {
         log('Không nhận được ID token từ Google');
-        throw AuthException("Không thể xác thực với Google");
+        throw AuthException("Không thể xác thực với Google. Vui lòng thử lại.");
       }
 
-      final cred = GoogleAuthProvider.credential(
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
       );
 
+      // Sign in to Firebase with the Google credential
       log('Đang xác thực với Firebase');
-      final userCredential = await _auth.signInWithCredential(cred);
-      log('Đăng nhập Google thành công: ${userCredential.user?.email}');
+      final userCredential = await _auth.signInWithCredential(credential);
 
+      if (userCredential.user == null) {
+        log('Không nhận được thông tin người dùng từ Firebase');
+        throw AuthException(
+            "Không thể lấy thông tin người dùng. Vui lòng thử lại.");
+      }
+
+      log('Đăng nhập Google thành công: ${userCredential.user?.email}');
       return userCredential;
     } on FirebaseAuthException catch (e) {
       log('Lỗi Firebase khi đăng nhập Google: ${e.code} - ${e.message}');
       throw AuthException(exceptionHandler(e.code));
     } catch (e) {
       log('Lỗi không xác định khi đăng nhập Google: $e');
-      throw AuthException("Đã xảy ra lỗi khi đăng nhập với Google");
+      throw AuthException(
+          "Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại.");
     }
   }
 

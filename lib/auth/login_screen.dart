@@ -21,9 +21,87 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _email.dispose();
     _password.dispose();
+    super.dispose();
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _login() async {
+    if (_email.text.isEmpty || _password.text.isEmpty) {
+      _showError("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(_email.text)) {
+      _showError("Email không hợp lệ");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final user = await _auth.loginUserWithEmailAndPassword(
+        _email.text.trim(),
+        _password.text,
+      );
+
+      if (!mounted) return;
+
+      if (user != null) {
+        if (!user.emailVerified) {
+          await _auth.signout();
+          _showError("Vui lòng xác thực email trước khi đăng nhập");
+          return;
+        }
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on AuthException catch (e) {
+      _showError(e.message);
+    } catch (e) {
+      _showError("Đã xảy ra lỗi không xác định");
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    setState(() => isLoading = true);
+
+    try {
+      final userCredential = await _auth.loginWithGoogle();
+      if (!mounted) return;
+
+      if (userCredential?.user != null) {
+        log('Đăng nhập Google thành công: ${userCredential!.user?.email}');
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on AuthException catch (e) {
+      log('Lỗi đăng nhập Google: ${e.message}');
+      _showError(e.message);
+    } catch (e) {
+      log('Lỗi không xác định khi đăng nhập Google: $e');
+      _showError("Đã xảy ra lỗi khi đăng nhập với Google");
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
   }
 
   @override
@@ -47,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  // Logo without circular border
+                  // Logo
                   SizedBox(
                     height: 120,
                     child: Image.asset(
@@ -90,101 +168,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 60),
 
                   // Email field
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5, bottom: 4),
-                        child: Text(
-                          "Email",
-                          style: TextStyle(
-                            color: Color(0xFFFFC107),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: TextField(
-                          controller: _email,
-                          style: const TextStyle(color: Colors.black87),
-                          decoration: InputDecoration(
-                            hintText: "Nhập Email",
-                            hintStyle: TextStyle(color: Colors.grey.shade500),
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 15),
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.person_outline,
-                              color: Colors.grey.shade600,
-                            ),
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                    ],
+                  _buildTextField(
+                    label: "Email",
+                    hint: "Nhập Email",
+                    icon: Icons.person_outline,
+                    controller: _email,
                   ),
 
                   const SizedBox(height: 20),
 
                   // Password field
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5, bottom: 4),
-                        child: Text(
-                          "Password",
-                          style: TextStyle(
-                            color: Color(0xFFFFC107),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: TextField(
-                          controller: _password,
-                          obscureText: _obscurePassword,
-                          style: const TextStyle(color: Colors.black87),
-                          decoration: InputDecoration(
-                            hintText: "Nhập mật khẩu",
-                            hintStyle: TextStyle(color: Colors.grey.shade500),
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 15),
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.lock_outline,
-                              color: Colors.grey.shade600,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.grey.shade600,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                    ],
+                  _buildTextField(
+                    label: "Password",
+                    hint: "Nhập mật khẩu",
+                    icon: Icons.lock_outline,
+                    controller: _password,
+                    isPassword: true,
                   ),
 
                   const SizedBox(height: 15),
 
+                  // Forgot password
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -198,8 +202,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       style: TextButton.styleFrom(
                         minimumSize: Size.zero,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 5),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: const Text(
@@ -250,73 +254,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 15),
 
                   // Social login
-                  isLoading
-                      ? const CircularProgressIndicator(
-                          color: Color(0xFF33B2F7),
-                        )
-                      : Column(
-                          children: [
-                            const Text(
-                              "Đăng nhập với",
-                              style: TextStyle(
-                                color: Color(0xFFFFC107),
-                                fontSize: 14,
+                  if (!isLoading) ...[
+                    const Text(
+                      "Đăng nhập với",
+                      style: TextStyle(
+                        color: Color(0xFFFFC107),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Google icon
+                        InkWell(
+                          onTap: _loginWithGoogle,
+                          child: SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: Center(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CustomPaint(
+                                  painter: GoogleLogoExactPainter(),
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Google icon
-                                InkWell(
-                                  onTap: () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    try {
-                                      final userCredential =
-                                          await _auth.loginWithGoogle();
-                                      if (userCredential?.user != null &&
-                                          mounted) {
-                                        log('Đăng nhập Google thành công: ${userCredential!.user?.email}');
-                                        Navigator.pushReplacementNamed(
-                                            context, '/home');
-                                      }
-                                    } on AuthException catch (e) {
-                                      log('Lỗi đăng nhập Google: ${e.message}');
-                                      _showMessage(e.message);
-                                    } catch (e) {
-                                      log('Lỗi không xác định khi đăng nhập Google: $e');
-                                      _showMessage(
-                                          "Đã xảy ra lỗi khi đăng nhập với Google");
-                                    } finally {
-                                      if (mounted) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                      }
-                                    }
-                                  },
-                                  child: SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CustomPaint(
-                                          painter: GoogleLogoExactPainter(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                // Facebook icon
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
+                      ],
+                    ),
+                  ],
 
                   const SizedBox(height: 20),
 
@@ -332,7 +301,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => goToSignup(context),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignupScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Đăng ký",
                           style: TextStyle(
@@ -354,66 +330,64 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  goToSignup(BuildContext context) => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const SignupScreen()),
-      );
-
-  Future<void> _login() async {
-    if (_email.text.isEmpty || _password.text.isEmpty) {
-      _showMessage("Vui lòng điền đầy đủ thông tin");
-      return;
-    }
-
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(_email.text)) {
-      _showMessage("Email không hợp lệ");
-      return;
-    }
-
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      final user = await _auth.loginUserWithEmailAndPassword(
-        _email.text.trim(),
-        _password.text,
-      );
-
-      if (user != null) {
-        if (!user.emailVerified) {
-          await _auth.signout();
-          _showMessage("Vui lòng xác thực email trước khi đăng nhập");
-          return;
-        }
-
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      }
-    } on AuthException catch (e) {
-      _showMessage(e.message);
-    } catch (e) {
-      _showMessage("Đã xảy ra lỗi không xác định");
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF33B2F7),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required IconData icon,
+    required TextEditingController controller,
+    bool isPassword = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 5, bottom: 4),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFFFFC107),
+              fontSize: 14,
+            ),
+          ),
         ),
-      ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: TextField(
+            controller: controller,
+            obscureText: isPassword ? _obscurePassword : false,
+            style: const TextStyle(color: Colors.black87),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey.shade500),
+              contentPadding: const EdgeInsets.symmetric(vertical: 15),
+              border: InputBorder.none,
+              prefixIcon: Icon(
+                icon,
+                color: Colors.grey.shade600,
+              ),
+              suffixIcon: isPassword
+                  ? IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    )
+                  : null,
+              isDense: true,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
