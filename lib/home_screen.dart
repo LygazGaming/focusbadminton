@@ -98,12 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  // Right icons
-                  IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    onPressed: _signOut,
-                  ),
                   const SizedBox(width: 12),
                   SvgPicture.asset(
                     'assets/icons/box_icon.svg',
@@ -214,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 10),
                       StreamBuilder<List<Product>>(
-                        stream: _productService.getSaleProducts(),
+                        stream: _productService.getAllProducts(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return const Center(
@@ -223,6 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           final products = snapshot.data!;
+                          print('Số lượng sản phẩm: ${products.length}');
                           return SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(

@@ -221,7 +221,8 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              product.brand,
+                                              product.brand ??
+                                                  'Không có thương hiệu',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey[600],
@@ -280,7 +281,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 IconButton(
                                                   icon: const Icon(Icons.add),
                                                   onPressed: item.quantity <
-                                                          product.stock
+                                                          (product.stock ?? 0)
                                                       ? () {
                                                           _updateQuantity(
                                                             product.id,

@@ -125,7 +125,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   const SizedBox(height: 8),
                   // Brand
                   Text(
-                    product.brand,
+                    product.brand ?? 'Không có thương hiệu',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -147,14 +147,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           color: Colors.red,
                         ),
                       ),
-                      if (product.originalPrice > product.price) ...[
+                      if ((product.originalPrice ?? 0) > product.price) ...[
                         const SizedBox(width: 8),
                         Text(
                           NumberFormat.currency(
                             locale: 'vi_VN',
                             symbol: '₫',
                             decimalDigits: 0,
-                          ).format(product.originalPrice),
+                          ).format(product.originalPrice ?? product.price),
                           style: TextStyle(
                             fontSize: 16,
                             decoration: TextDecoration.lineThrough,
@@ -171,7 +171,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Icon(Icons.star, color: Colors.amber[700]),
                       const SizedBox(width: 4),
                       Text(
-                        product.rating.toString(),
+                        (product.rating ?? 0.0).toStringAsFixed(1),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -179,7 +179,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '(${product.reviewCount} đánh giá)',
+                        '(${product.reviewCount ?? 0} đánh giá)',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -214,7 +214,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  ...product.specifications.map((spec) => Padding(
+                  ...(product.specifications ?? []).map((spec) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

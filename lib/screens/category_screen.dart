@@ -91,7 +91,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               products.sort((a, b) => b.price.compareTo(a.price));
               break;
             case 'rating':
-              products.sort((a, b) => b.rating.compareTo(a.rating));
+              products
+                  .sort((a, b) => (b.rating ?? 0.0).compareTo(a.rating ?? 0.0));
               break;
             default: // newest
               products.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -189,7 +190,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               const SizedBox(height: 4),
                               // Brand
                               Text(
-                                product.brand,
+                                product.brand ?? 'Không có thương hiệu',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[600],
@@ -211,7 +212,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       color: Colors.red,
                                     ),
                                   ),
-                                  if (product.originalPrice >
+                                  if ((product.originalPrice ?? 0) >
                                       product.price) ...[
                                     const SizedBox(width: 4),
                                     Text(
@@ -219,7 +220,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         locale: 'vi_VN',
                                         symbol: '₫',
                                         decimalDigits: 0,
-                                      ).format(product.originalPrice),
+                                      ).format(product.originalPrice ??
+                                          product.price),
                                       style: TextStyle(
                                         fontSize: 12,
                                         decoration: TextDecoration.lineThrough,
@@ -237,7 +239,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       color: Colors.amber[700], size: 16),
                                   const SizedBox(width: 4),
                                   Text(
-                                    product.rating.toString(),
+                                    (product.rating ?? 0.0).toStringAsFixed(1),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,

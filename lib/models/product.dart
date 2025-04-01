@@ -5,18 +5,18 @@ class Product {
   final String name;
   final String description;
   final double price;
-  final double originalPrice;
+  final double? originalPrice;
   final String imageUrl;
-  final String brand;
+  final String? brand;
   final String category;
-  final List<String> specifications;
-  final int stock;
-  final double rating;
-  final int reviewCount;
-  final bool isNew;
-  final bool isHot;
-  final bool isSale;
-  final double discountPercentage;
+  final List<String>? specifications;
+  final int? stock;
+  final double? rating;
+  final int? reviewCount;
+  final bool? isNew;
+  final bool? isHot;
+  final bool? isSale;
+  final double? discountPercentage;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -25,18 +25,18 @@ class Product {
     required this.name,
     required this.description,
     required this.price,
-    required this.originalPrice,
+    this.originalPrice,
     required this.imageUrl,
-    required this.brand,
+    this.brand,
     required this.category,
-    required this.specifications,
-    required this.stock,
-    required this.rating,
-    required this.reviewCount,
-    required this.isNew,
-    required this.isHot,
-    required this.isSale,
-    required this.discountPercentage,
+    this.specifications,
+    this.stock,
+    this.rating,
+    this.reviewCount,
+    this.isNew,
+    this.isHot,
+    this.isSale,
+    this.discountPercentage,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -48,18 +48,25 @@ class Product {
       name: data['name'] ?? '',
       description: data['description'] ?? '',
       price: (data['price'] ?? 0.0).toDouble(),
-      originalPrice: (data['originalPrice'] ?? 0.0).toDouble(),
+      originalPrice: data['originalPrice'] != null
+          ? (data['originalPrice'] as num).toDouble()
+          : null,
       imageUrl: data['imageUrl'] ?? '',
-      brand: data['brand'] ?? '',
+      brand: data['brand'],
       category: data['category'] ?? '',
-      specifications: List<String>.from(data['specifications'] ?? []),
-      stock: data['stock'] ?? 0,
-      rating: (data['rating'] ?? 0.0).toDouble(),
-      reviewCount: data['reviewCount'] ?? 0,
-      isNew: data['isNew'] ?? false,
-      isHot: data['isHot'] ?? false,
-      isSale: data['isSale'] ?? false,
-      discountPercentage: (data['discountPercentage'] ?? 0.0).toDouble(),
+      specifications: data['specifications'] != null
+          ? List<String>.from(data['specifications'])
+          : null,
+      stock: data['stock'],
+      rating:
+          data['rating'] != null ? (data['rating'] as num).toDouble() : null,
+      reviewCount: data['reviewCount'],
+      isNew: data['isNew'],
+      isHot: data['isHot'],
+      isSale: data['isSale'],
+      discountPercentage: data['discountPercentage'] != null
+          ? (data['discountPercentage'] as num).toDouble()
+          : null,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
