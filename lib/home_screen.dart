@@ -6,6 +6,7 @@ import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/screens/notification_screen.dart';
 import 'package:focusbadminton/screens/product_detail_screen.dart';
 import 'package:focusbadminton/screens/profile_screen.dart';
+import 'package:focusbadminton/screens/search_screen.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -83,6 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: TextField(
                         controller: _searchController,
+                        readOnly: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SearchScreen(),
+                            ),
+                          );
+                        },
                         decoration: InputDecoration(
                           hintText: 'Tìm kiếm',
                           hintStyle: TextStyle(color: Colors.grey[400]),
@@ -92,9 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
                         ),
-                        onSubmitted: (value) {
-                          // TODO: Implement search functionality
-                        },
                       ),
                     ),
                   ),

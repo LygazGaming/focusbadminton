@@ -89,4 +89,41 @@ class ProductService {
       return snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
     });
   }
+
+  // Tìm kiếm sản phẩm
+  Stream<List<Product>> searchProducts(String query) {
+    developer.log('Bắt đầu tìm kiếm sản phẩm với từ khóa: $query');
+    return _firestore
+        .collection('products')
+        .orderBy('name')
+        .startAt([query])
+        .endAt([query + '\uf8ff'])
+        .snapshots()
+        .map((snapshot) {
+          developer.log('Số lượng sản phẩm tìm thấy: ${snapshot.docs.length}');
+          return snapshot.docs
+              .map((doc) => Product.fromFirestore(doc))
+              .toList();
+        });
+  }
+
+  // Lấy sản phẩm theo danh mục và tìm kiếm
+  Stream<List<Product>> getProductsByCategoryAndSearch(
+      String category, String query) {
+    developer.log(
+        'Bắt đầu tìm kiếm sản phẩm theo category: $category và từ khóa: $query');
+    return _firestore
+        .collection('products')
+        .where('category', isEqualTo: category)
+        .orderBy('name')
+        .startAt([query])
+        .endAt([query + '\uf8ff'])
+        .snapshots()
+        .map((snapshot) {
+          developer.log('Số lượng sản phẩm tìm thấy: ${snapshot.docs.length}');
+          return snapshot.docs
+              .map((doc) => Product.fromFirestore(doc))
+              .toList();
+        });
+  }
 }

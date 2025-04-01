@@ -33,7 +33,11 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Navigate to main screen after animation
     Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/',
+        (route) => false,
+      );
     });
   }
 

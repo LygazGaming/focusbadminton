@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/services/product_service.dart';
+import 'package:focusbadminton/services/cart_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
@@ -18,8 +19,10 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final _productService = ProductService();
+  final _cartService = CartService();
   Product? _product;
   bool _isLoading = true;
+  int _quantity = 1;
 
   @override
   void initState() {
@@ -44,6 +47,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Không thể tải thông tin sản phẩm'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _addToCart() async {
+    if (_product == null) return;
+
+    try {
+      await _cartService.addToCart(_product!.id, _quantity);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đã thêm sản phẩm vào giỏ hàng'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể thêm sản phẩm vào giỏ hàng'),
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -254,14 +282,60 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
         child: Row(
           children: [
+            // Quantity selector
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: _quantity > 1
+                        ? () {
+                            setState(() {
+                              _quantity--;
+                            });
+                          }
+                        : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      _quantity.toString(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: _quantity < (product.stock ?? 1)
+                        ? () {
+                            setState(() {
+                              _quantity++;
+                            });
+                          }
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Add to cart button
             Expanded(
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Implement add to cart functionality
-                },
+                onPressed: _addToCart,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[900],
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: const Text(
                   'Thêm vào giỏ hàng',

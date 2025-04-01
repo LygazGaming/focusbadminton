@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
         '/verification': (context) => VerificationScreen(
               user: FirebaseAuth.instance.currentUser!,
             ),
-        '/home': (context) => const Wrapper(),
       },
     );
   }
