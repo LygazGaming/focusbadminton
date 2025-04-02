@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(70),
         child: AppBar(
           backgroundColor: Colors.blue[900],
+          elevation: 0,
           flexibleSpace: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -59,16 +60,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Logo
                   Image.asset(
                     'assets/images/logo.png',
-                    height: 35,
+                    height: 45,
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(width: 16),
                   // Search bar
                   Expanded(
                     child: Container(
-                      height: 40,
+                      height: 45,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: TextField(
                         controller: _searchController,
@@ -82,37 +91,52 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         decoration: InputDecoration(
-                          hintText: 'Tìm kiếm',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon:
-                              Icon(Icons.search, color: Colors.grey[400]),
+                          hintText: 'Tìm kiếm sản phẩm',
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontStyle: FontStyle.italic,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.blue[900],
+                            size: 22,
+                          ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  SvgPicture.asset(
-                    'assets/icons/box_icon.svg',
-                    height: 24,
-                    colorFilter:
-                        ColorFilter.mode(Colors.amber, BlendMode.srcIn),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/box_icon.svg',
+                      height: 24,
+                      colorFilter:
+                          ColorFilter.mode(Colors.amber, BlendMode.srcIn),
+                    ),
                   ),
                   const SizedBox(width: 12),
-                  SvgPicture.asset(
-                    'assets/icons/location_icon.svg',
-                    height: 24,
-                    colorFilter:
-                        ColorFilter.mode(Colors.amber, BlendMode.srcIn),
-                  ),
-                  const SizedBox(width: 12),
-                  SvgPicture.asset(
-                    'assets/icons/qr_icon.svg',
-                    height: 24,
-                    colorFilter:
-                        ColorFilter.mode(Colors.amber, BlendMode.srcIn),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/location_icon.svg',
+                      height: 24,
+                      colorFilter:
+                          ColorFilter.mode(Colors.amber, BlendMode.srcIn),
+                    ),
                   ),
                 ],
               ),
@@ -130,8 +154,22 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Top circular menu
                 Container(
-                  color: Colors.blue[900],
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[900],
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.only(top: 10, bottom: 25),
                   child: Column(
                     children: [
                       Row(
@@ -183,25 +221,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Flash deals section
                 Container(
+                  margin: const EdgeInsets.only(top: 20),
                   padding: const EdgeInsets.all(16),
-                  color: Colors.orange[100],
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.orange[50]!, Colors.orange[200]!],
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'Flash deals',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.flash_on,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  'Flash Deals',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Text('11 : 11', style: TextStyle(color: Colors.red)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red[800],
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              '11:11',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 15),
                       StreamBuilder<List<Product>>(
                         stream: _productService.getAllProducts(),
                         builder: (context, snapshot) {
@@ -212,17 +295,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           final products = snapshot.data!;
-                          print('Số lượng sản phẩm: ${products.length}');
                           return SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: products.map((product) {
                                 return Container(
-                                  width: 150,
-                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 160,
+                                  margin: const EdgeInsets.only(right: 15),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                    ],
                                   ),
                                   child: GestureDetector(
                                     onTap: () {
@@ -237,47 +326,138 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        CachedNetworkImage(
-                                          imageUrl: product.imageUrl,
-                                          height: 120,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              Container(
-                                            color: Colors.grey[200],
-                                            child: const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                        Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(12),
+                                                topRight: Radius.circular(12),
+                                              ),
+                                              child: CachedNetworkImage(
+                                                imageUrl: product.imageUrl,
+                                                height: 130,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                  color: Colors.grey[200],
+                                                  child: const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Container(
+                                                  color: Colors.grey[200],
+                                                  child: const Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.red,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                            color: Colors.grey[200],
-                                            child: const Icon(
-                                              Icons.error_outline,
-                                              color: Colors.red,
-                                              size: 40,
+                                            Positioned(
+                                              top: 10,
+                                              left: 10,
+                                              child: product.originalPrice !=
+                                                          null &&
+                                                      product.originalPrice! >
+                                                          product.price
+                                                  ? Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.red,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      child: Text(
+                                                        '-${((1 - product.price / product.originalPrice!) * 100).round()}%',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : const SizedBox.shrink(),
                                             ),
-                                          ),
+                                          ],
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(10.0),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                NumberFormat.currency(
-                                                  locale: 'vi_VN',
-                                                  symbol: '₫',
-                                                  decimalDigits: 0,
-                                                ).format(product.price),
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontWeight: FontWeight.bold,
+                                                product.name,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
                                                 ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Text(product.name),
+                                              const SizedBox(height: 6),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      NumberFormat.currency(
+                                                        locale: 'vi_VN',
+                                                        symbol: '₫',
+                                                        decimalDigits: 0,
+                                                      ).format(product.price),
+                                                      style: TextStyle(
+                                                        color: Colors.red[700],
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  if (product.originalPrice !=
+                                                      null)
+                                                    Flexible(
+                                                      child: Text(
+                                                        NumberFormat.currency(
+                                                          locale: 'vi_VN',
+                                                          symbol: '₫',
+                                                          decimalDigits: 0,
+                                                        ).format(product
+                                                            .originalPrice),
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 12,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -300,30 +480,65 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Danh mục',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Danh mục sản phẩm',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 1; // Chuyển đến tab danh mục
+                              });
+                            },
+                            child: Text(
+                              'Xem thêm',
+                              style: TextStyle(
+                                color: Colors.blue[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 15),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 1.5,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
                         ),
                         itemCount: 4,
                         itemBuilder: (context, index) {
                           final categories = [
-                            {'name': 'Vợt', 'icon': Icons.sports_tennis},
-                            {'name': 'Giày', 'icon': Icons.shopping_bag},
-                            {'name': 'Túi', 'icon': Icons.backpack},
-                            {'name': 'Phụ kiện', 'icon': Icons.settings},
+                            {
+                              'name': 'Vợt',
+                              'icon': Icons.sports_tennis,
+                              'color': Colors.blue[700]
+                            },
+                            {
+                              'name': 'Giày',
+                              'icon': Icons.shopping_bag,
+                              'color': Colors.green[600]
+                            },
+                            {
+                              'name': 'Túi',
+                              'icon': Icons.backpack,
+                              'color': Colors.orange[700]
+                            },
+                            {
+                              'name': 'Phụ kiện',
+                              'icon': Icons.settings,
+                              'color': Colors.purple[600]
+                            },
                           ];
 
                           return GestureDetector(
@@ -340,23 +555,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.blue[100],
-                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    (categories[index]['color'] as Color?)
+                                            ?.withOpacity(0.7) ??
+                                        Colors.blue[700]!.withOpacity(0.7),
+                                    (categories[index]['color'] as Color?)
+                                            ?.withOpacity(0.9) ??
+                                        Colors.blue[900]!.withOpacity(0.9),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     categories[index]['icon'] as IconData,
-                                    size: 40,
-                                    color: Colors.blue[900],
+                                    size: 45,
+                                    color: Colors.white,
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 10),
                                   Text(
                                     categories[index]['name'] as String,
                                     style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
@@ -370,36 +604,79 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 // Brand section
-                Padding(
-                  padding: const EdgeInsets.all(16),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Thương hiệu',
+                        'Thương hiệu hàng đầu',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                            ),
+                      const SizedBox(height: 15),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildBrandCard('assets/images/yonex.png', 'Yonex'),
+                            _buildBrandCard(
+                                'assets/images/lining.jpg', 'Li-Ning'),
+                            _buildBrandCard(
+                                'assets/images/victor.jpg', 'Victor'),
+                            _buildBrandCard(
+                                'assets/images/kawasaki.png', 'Kawasaki'),
                           ],
                         ),
-                        child: Image.asset(
-                          'assets/images/yonex.png',
-                          height: 50,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Footer
+                Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[900],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildFooterItem(Icons.local_shipping_outlined,
+                              'Giao hàng\ntoàn quốc'),
+                          _buildFooterItem(
+                              Icons.verified_outlined, 'Sản phẩm\nchính hãng'),
+                          _buildFooterItem(
+                              Icons.support_agent_outlined, 'Hỗ trợ\n24/7'),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'FOCUS BADMINTON',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM\nHotline: 0123 456 789',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -423,25 +700,42 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        items: const [
+        elevation: 8,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.blue[900],
+        unselectedItemColor: Colors.grey[600],
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 11,
+        ),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home_rounded),
             label: 'Trang chủ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.category),
+            icon: Icon(Icons.category_outlined),
+            activeIcon: Icon(Icons.category_rounded),
             label: 'Danh mục',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_outlined),
+            activeIcon: Icon(Icons.shopping_cart),
             label: 'Giỏ hàng',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: Icon(Icons.notifications_outlined),
+            activeIcon: Icon(Icons.notifications),
             label: 'Thông báo',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
             label: 'Tài khoản',
           ),
         ],
@@ -532,6 +826,65 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 12,
               color: Colors.white,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBrandCard(String imagePath, String brandName) {
+    return Container(
+      width: 120,
+      margin: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Image.asset(
+            imagePath,
+            height: 50,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            brandName,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooterItem(IconData icon, String text) {
+    return Flexible(
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 30),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
         ],
       ),
