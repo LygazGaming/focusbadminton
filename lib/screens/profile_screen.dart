@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focusbadminton/auth/auth_service.dart';
 import 'package:focusbadminton/auth/login_screen.dart';
-import 'package:focusbadminton/widgets/button.dart';
+import 'package:focusbadminton/screens/order_history_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -112,7 +112,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.shopping_bag,
                         title: 'Đơn hàng của tôi',
                         onTap: () {
-                          // TODO: Navigate to orders screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const OrderHistoryScreen(),
+                            ),
+                          );
                         },
                       ),
                       _buildMenuItem(

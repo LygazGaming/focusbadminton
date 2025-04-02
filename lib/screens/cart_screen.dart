@@ -6,6 +6,7 @@ import 'package:focusbadminton/services/cart_service.dart';
 import 'package:focusbadminton/widgets/button.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -123,7 +124,7 @@ class _CartScreenState extends State<CartScreen> {
                   itemBuilder: (context, index) {
                     final item = cartItems[index];
                     return FutureBuilder<Product?>(
-                      future: _productService.getProductById(item.productId),
+                      future: _productService.getProductById(item.product.id),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return const SizedBox.shrink();
@@ -239,7 +240,7 @@ class _CartScreenState extends State<CartScreen> {
                                             onPressed: item.quantity > 1
                                                 ? () {
                                                     _cartService.updateQuantity(
-                                                      item.productId,
+                                                      item.product.id,
                                                       item.quantity - 1,
                                                     );
                                                   }
@@ -263,7 +264,7 @@ class _CartScreenState extends State<CartScreen> {
                                                     (product.stock ?? 1)
                                                 ? () {
                                                     _cartService.updateQuantity(
-                                                      item.productId,
+                                                      item.product.id,
                                                       item.quantity + 1,
                                                     );
                                                   }
@@ -279,7 +280,7 @@ class _CartScreenState extends State<CartScreen> {
                               IconButton(
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () {
-                                  _cartService.removeFromCart(item.productId);
+                                  _cartService.removeFromCart(item.product.id);
                                 },
                               ),
                             ],
@@ -318,8 +319,8 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         FutureBuilder<List<Product?>>(
                           future: Future.wait(
-                            cartItems.map((item) =>
-                                _productService.getProductById(item.productId)),
+                            cartItems.map((item) => _productService
+                                .getProductById(item.product.id)),
                           ),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
@@ -331,7 +332,7 @@ class _CartScreenState extends State<CartScreen> {
                               0,
                               (sum, item) {
                                 final product = products.firstWhere(
-                                  (p) => p?.id == item.productId,
+                                  (p) => p?.id == item.product.id,
                                   orElse: () => null,
                                 );
                                 return sum +
@@ -356,15 +357,26 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    CustomButton(
-                      label: 'Thanh toán',
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[900],
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
+                    ElevatedButton(
                       onPressed: () {
-                        // TODO: Implement checkout functionality
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CheckoutScreen(),
+                          ),
+                        );
                       },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.blue[900],
+                      ),
+                      child: const Text(
+                        'Tiến hành thanh toán',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),

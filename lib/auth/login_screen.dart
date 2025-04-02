@@ -3,6 +3,7 @@ import 'package:focusbadminton/auth/forgot_pass.dart';
 import 'package:focusbadminton/auth/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -84,6 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
 
     try {
+      // Kiểm tra xem còn trạng thái đăng nhập Google không
+      final googleSignIn = GoogleSignIn();
+      if (await googleSignIn.isSignedIn()) {
+        log('Phát hiện đã đăng nhập Google, đang đăng xuất trước...');
+        await googleSignIn.signOut();
+      }
+
+      // Tiến hành đăng nhập
       final userCredential = await _auth.loginWithGoogle();
       if (!mounted) return;
 

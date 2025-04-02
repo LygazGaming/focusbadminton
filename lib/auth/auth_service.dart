@@ -122,6 +122,15 @@ class AuthService {
   Future<void> signout() async {
     try {
       log('Đang đăng xuất tài khoản: ${_auth.currentUser?.email}');
+
+      // Đăng xuất từ Google nếu người dùng đăng nhập bằng Google
+      final googleSignIn = GoogleSignIn();
+      if (await googleSignIn.isSignedIn()) {
+        log('Đăng xuất khỏi Google Sign In');
+        await googleSignIn.signOut();
+      }
+
+      // Đăng xuất khỏi Firebase
       await _auth.signOut();
       log('Đăng xuất thành công');
     } catch (e) {

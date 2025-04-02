@@ -8,6 +8,7 @@ import 'package:focusbadminton/auth/signup_screen.dart';
 import 'package:focusbadminton/auth/forgot_pass.dart';
 import 'package:focusbadminton/auth/verification_screen.dart';
 import 'package:focusbadminton/screens/splash_screen.dart';
+import 'package:focusbadminton/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
         '/forgot-password': (context) => const ForgotPassword(),
+        '/home': (context) => const HomeScreen(),
         '/verification': (context) => VerificationScreen(
               user: FirebaseAuth.instance.currentUser!,
             ),
