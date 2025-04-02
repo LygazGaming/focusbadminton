@@ -1,4 +1,3 @@
-import 'package:focusbadminton/auth/auth_service.dart';
 import 'package:focusbadminton/auth/login_screen.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/screens/cart_screen.dart';
@@ -25,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   final ProductService _productService = ProductService();
-  final AuthService _authService = AuthService();
   User? _user;
 
   @override
