@@ -126,4 +126,19 @@ class ProductService {
               .toList();
         });
   }
+
+  // Lấy sản phẩm theo thương hiệu
+  Stream<List<Product>> getProductsByBrand(String brand) {
+    developer.log('Bắt đầu lấy sản phẩm theo thương hiệu: $brand');
+    return _firestore
+        .collection('products')
+        .where('brand', isEqualTo: brand)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      developer.log(
+          'Số lượng sản phẩm theo thương hiệu $brand: ${snapshot.docs.length}');
+      return snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    });
+  }
 }

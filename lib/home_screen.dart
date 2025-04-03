@@ -672,12 +672,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'color': Colors.blue[700]
                                 },
                                 {
-                                  'name': 'Giày',
+                                  'name': 'Áo',
                                   'icon': Icons.shopping_bag,
                                   'color': Colors.green[600]
                                 },
                                 {
-                                  'name': 'Túi',
+                                  'name': 'Balo',
                                   'icon': Icons.backpack,
                                   'color': Colors.orange[700]
                                 },
@@ -770,13 +770,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               children: [
                                 _buildBrandCard(
-                                    'assets/images/yonex.png', 'Yonex'),
+                                    'assets/images/yonex.png', 'Yonex',
+                                    onTap: () {
+                                  // Chuyển sang tab danh mục
+                                  setState(() {
+                                    _selectedIndex = 1;
+                                  });
+                                }),
                                 _buildBrandCard(
-                                    'assets/images/lining.jpg', 'Li-Ning'),
+                                    'assets/images/lining.jpg', 'Lining',
+                                    onTap: () {
+                                  // Chuyển sang tab danh mục
+                                  setState(() {
+                                    _selectedIndex = 1;
+                                  });
+                                }),
                                 _buildBrandCard(
-                                    'assets/images/victor.jpg', 'Victor'),
+                                    'assets/images/victor.jpg', 'Victor',
+                                    onTap: () {
+                                  // Chuyển sang tab danh mục
+                                  setState(() {
+                                    _selectedIndex = 1;
+                                  });
+                                }),
                                 _buildBrandCard(
-                                    'assets/images/kawasaki.png', 'Kawasaki'),
+                                    'assets/images/kawasaki.png', 'Kawasaki',
+                                    onTap: () {
+                                  // Chuyển sang tab danh mục
+                                  setState(() {
+                                    _selectedIndex = 1;
+                                  });
+                                }),
                               ],
                             ),
                           ),
@@ -1045,10 +1069,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             ],
           ),
-          // Other screens
+          // Categories tab
           const CategoryScreen(category: 'Tất cả'),
+          // Cart tab
           const CartScreen(),
+          // Notification tab
           const NotificationScreen(),
+          // Profile tab
           const ProfileScreen(),
         ],
       ),
@@ -1192,40 +1219,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBrandCard(String imagePath, String brandName) {
-    return Container(
-      width: 120,
-      margin: const EdgeInsets.only(right: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Image.asset(
-            imagePath,
-            height: 50,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            brandName,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+  Widget _buildBrandCard(String imagePath, String brandName,
+      {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        margin: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
             ),
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              imagePath,
+              height: 50,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              brandName,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
