@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/screens/product_detail_screen.dart';
+import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:focusbadminton/services/cart_service.dart';
 import 'package:focusbadminton/widgets/button.dart';
@@ -107,7 +108,11 @@ class _CartScreenState extends State<CartScreen> {
                       backgroundColor: Colors.blue[900],
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/home',
+                        (route) => false,
+                      );
                     },
                   ),
                 ],
