@@ -54,6 +54,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _showUpdateProfileDialog() async {
+    final nameController = TextEditingController(
+      text: _user?.displayName ?? _user?.email?.split('@').first ?? '',
+    );
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cập nhật tên hiển thị'),
+        content: TextField(
+          controller: nameController,
+          decoration: const InputDecoration(
+            labelText: 'Tên của bạn',
+            hintText: 'Nhập tên bạn muốn hiển thị',
+          ),
+          textCapitalization: TextCapitalization.words,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameController.text.trim().isNotEmpty) {
+                setState(() {
+                  _isLoading = true;
+                });
+                Navigator.pop(context);
+
+                try {
+                  await _user?.updateDisplayName(nameController.text.trim());
+                  // Refresh user data
+                  await _user?.reload();
+                  setState(() {
+                    _user = FirebaseAuth.instance.currentUser;
+                    _isLoading = false;
+                  });
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Cập nhật tên thành công!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Lỗi cập nhật: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            child: const Text('Lưu'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,13 +154,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               : null,
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          _user?.displayName ?? 'Chưa cập nhật tên',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _user?.displayName != null &&
+                                      _user!.displayName!.isNotEmpty
+                                  ? _user!.displayName!
+                                  : _user?.email?.split('@').first ??
+                                      'Người dùng',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (_user?.displayName == null ||
+                                _user!.displayName!.isEmpty)
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 16),
+                                tooltip: 'Cập nhật tên',
+                                onPressed: () => _showUpdateProfileDialog(),
+                              ),
+                          ],
                         ),
+                        if (_user?.displayName == null ||
+                            _user!.displayName!.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              'Nhấn vào biểu tượng bút để cập nhật tên của bạn',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.blue[700],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
                         const SizedBox(height: 8),
                         Text(
                           _user?.email ?? 'Chưa cập nhật email',
