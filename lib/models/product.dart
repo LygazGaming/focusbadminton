@@ -16,6 +16,9 @@ class Product {
   final Map<String, dynamic>? details;
   final bool isAvailable;
   final DateTime createdAt;
+  final bool isHot;
+  final bool isNew;
+  final bool isSale;
 
   Product({
     required this.id,
@@ -33,6 +36,9 @@ class Product {
     this.details,
     this.isAvailable = true,
     required this.createdAt,
+    this.isHot = false,
+    this.isNew = false,
+    this.isSale = false,
   });
 
   factory Product.fromMap(Map<String, dynamic> map, String id) {
@@ -60,6 +66,9 @@ class Product {
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
+      isHot: map['isHot'] ?? false,
+      isNew: map['isNew'] ?? false,
+      isSale: map['isSale'] ?? false,
     );
   }
 
@@ -90,6 +99,9 @@ class Product {
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
+      isHot: data['isHot'] ?? false,
+      isNew: data['isNew'] ?? false,
+      isSale: data['isSale'] ?? false,
     );
   }
 
@@ -109,6 +121,9 @@ class Product {
       'details': details,
       'isAvailable': isAvailable,
       'createdAt': Timestamp.fromDate(createdAt),
+      'isHot': isHot,
+      'isNew': isNew,
+      'isSale': isSale,
     };
   }
 
@@ -127,6 +142,9 @@ class Product {
     Map<String, dynamic>? details,
     bool? isAvailable,
     DateTime? createdAt,
+    bool? isHot,
+    bool? isNew,
+    bool? isSale,
   }) {
     return Product(
       id: id,
@@ -144,6 +162,9 @@ class Product {
       details: details ?? this.details,
       isAvailable: isAvailable ?? this.isAvailable,
       createdAt: createdAt ?? this.createdAt,
+      isHot: isHot ?? this.isHot,
+      isNew: isNew ?? this.isNew,
+      isSale: isSale ?? this.isSale,
     );
   }
 }

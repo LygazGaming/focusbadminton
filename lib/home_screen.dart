@@ -245,7 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    // Flash deals section
                     Container(
                       margin: const EdgeInsets.only(top: 20),
                       padding: const EdgeInsets.all(16),
@@ -280,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      'Flash Deals',
+                                      'Sản phẩm mới',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -290,29 +289,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.red[800],
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Text(
-                                  '11:11',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                           const SizedBox(height: 15),
                           StreamBuilder<List<Product>>(
-                            stream: _productService.getAllProducts(),
+                            stream: _productService.getNewProducts(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
                                 return const Center(
@@ -327,7 +308,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: products.map((product) {
                                     return Container(
                                       width: 160,
-                                      margin: const EdgeInsets.only(right: 15),
+                                      height: 255,
+                                      margin: const EdgeInsets.only(
+                                          right: 15, bottom: 5, top: 5),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(12),
@@ -358,36 +341,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: [
                                             Stack(
                                               children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(12),
-                                                    topRight:
-                                                        Radius.circular(12),
-                                                  ),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: product.imageUrl,
-                                                    height: 130,
-                                                    width: double.infinity,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            Container(
-                                                      color: Colors.grey[200],
-                                                      child: const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      ),
+                                                Container(
+                                                  height: 150,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(12),
+                                                      topRight:
+                                                          Radius.circular(12),
                                                     ),
-                                                    errorWidget:
-                                                        (context, url, error) =>
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(12),
+                                                      topRight:
+                                                          Radius.circular(12),
+                                                    ),
+                                                    child: Container(
+                                                      color: Colors.white,
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            product.imageUrl,
+                                                        height: 150,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.contain,
+                                                        placeholder:
+                                                            (context, url) =>
+                                                                Container(
+                                                          color:
+                                                              Colors.grey[200],
+                                                          height: 150,
+                                                          child: const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
                                                             Container(
-                                                      color: Colors.grey[200],
-                                                      child: const Icon(
-                                                        Icons.error_outline,
-                                                        color: Colors.red,
-                                                        size: 40,
+                                                          color:
+                                                              Colors.grey[200],
+                                                          height: 150,
+                                                          child: const Icon(
+                                                            Icons.error_outline,
+                                                            color: Colors.red,
+                                                            size: 40,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -429,54 +433,120 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         )
                                                       : const SizedBox.shrink(),
                                                 ),
+                                                if (product.isHot)
+                                                  Positioned(
+                                                    top: 10,
+                                                    right: 10,
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.orange,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .local_fire_department,
+                                                            color: Colors.white,
+                                                            size: 14,
+                                                          ),
+                                                          SizedBox(width: 2),
+                                                          Text(
+                                                            'HOT',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (product.isSale &&
+                                                    !product.isHot)
+                                                  Positioned(
+                                                    top: 10,
+                                                    right: 10,
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.deepPurple,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.sell,
+                                                            color: Colors.white,
+                                                            size: 14,
+                                                          ),
+                                                          SizedBox(width: 2),
+                                                          Text(
+                                                            'SALE',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
                                               ],
                                             ),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    product.name,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 14,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  const SizedBox(height: 6),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text(
-                                                          NumberFormat.currency(
-                                                            locale: 'vi_VN',
-                                                            symbol: '₫',
-                                                            decimalDigits: 0,
-                                                          ).format(
-                                                              product.price),
-                                                          style: TextStyle(
-                                                            color:
-                                                                Colors.red[700],
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 15,
-                                                          ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: 85,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      product.name,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14,
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                      if (product
-                                                              .originalPrice !=
-                                                          null)
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
                                                         Flexible(
                                                           child: Text(
                                                             NumberFormat
@@ -484,27 +554,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               locale: 'vi_VN',
                                                               symbol: '₫',
                                                               decimalDigits: 0,
-                                                            ).format(product
-                                                                .originalPrice),
+                                                            ).format(
+                                                                product.price),
                                                             style: TextStyle(
                                                               color: Colors
-                                                                  .grey[600],
+                                                                  .red[700],
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w400,
-                                                              fontSize: 12,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .lineThrough,
+                                                                      .bold,
+                                                              fontSize: 15,
                                                             ),
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
                                                           ),
                                                         ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        if (product
+                                                                .originalPrice !=
+                                                            null)
+                                                          Flexible(
+                                                            child: Text(
+                                                              NumberFormat
+                                                                  .currency(
+                                                                locale: 'vi_VN',
+                                                                symbol: '₫',
+                                                                decimalDigits:
+                                                                    0,
+                                                              ).format(product
+                                                                  .originalPrice),
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .grey[600],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 12,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .lineThrough,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
