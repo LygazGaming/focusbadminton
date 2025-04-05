@@ -313,7 +313,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.add),
-                    onPressed: _quantity < (product.stock ?? 1)
+                    onPressed: _quantity < (product.stock ?? 99)
                         ? () {
                             setState(() {
                               _quantity++;

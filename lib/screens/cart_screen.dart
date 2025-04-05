@@ -20,6 +20,25 @@ class _CartScreenState extends State<CartScreen> {
   final CartService _cartService = CartService();
 
   @override
+  void initState() {
+    super.initState();
+    // Đồng bộ hóa thông tin stock từ sản phẩm gốc
+    _syncCartWithProducts();
+  }
+
+  Future<void> _syncCartWithProducts() async {
+    try {
+      await _cartService.syncCartWithProductInfo();
+      // Sau khi đồng bộ xong, cập nhật UI
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      print('Lỗi khi đồng bộ giỏ hàng: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -255,7 +274,7 @@ class _CartScreenState extends State<CartScreen> {
                                               horizontal: 12,
                                             ),
                                             child: Text(
-                                              item.quantity.toString(),
+                                              "${item.quantity}",
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -265,7 +284,7 @@ class _CartScreenState extends State<CartScreen> {
                                           IconButton(
                                             icon: const Icon(Icons.add),
                                             onPressed: item.quantity <
-                                                    (product.stock ?? 1)
+                                                    (item.product.stock ?? 99)
                                                 ? () {
                                                     _cartService.updateQuantity(
                                                       item.product.id,
@@ -273,6 +292,10 @@ class _CartScreenState extends State<CartScreen> {
                                                     );
                                                   }
                                                 : null,
+                                            color: item.quantity <
+                                                    (item.product.stock ?? 99)
+                                                ? Colors.blue
+                                                : Colors.grey,
                                           ),
                                         ],
                                       ),

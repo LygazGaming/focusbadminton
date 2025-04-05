@@ -30,6 +30,7 @@ class CartItem {
         description: map['description'] ?? '',
         imageUrl: map['imageUrl'] ?? '',
         category: map['category'] ?? '',
+        stock: map['stock'] ?? 1,
         createdAt: map['createdAt'] != null
             ? (map['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
@@ -65,6 +66,18 @@ class CartService {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return;
 
+    // Lấy thông tin sản phẩm mới nhất từ Firestore để đảm bảo có stock đúng
+    final productDoc =
+        await _firestore.collection('products').doc(product.id).get();
+    int latestStock = 99; // Mặc định là 99 nếu không có thông tin
+
+    if (productDoc.exists) {
+      final productData = productDoc.data();
+      if (productData != null && productData['stock'] != null) {
+        latestStock = productData['stock'];
+      }
+    }
+
     // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
     final cartItemRef = _firestore
         .collection('users')
@@ -80,6 +93,7 @@ class CartService {
       final existingQuantity = existingDoc.data()['quantity'] ?? 0;
       await existingDoc.reference.update({
         'quantity': existingQuantity + quantity,
+        'stock': latestStock, // Cập nhật stock mới nhất
       });
     } else {
       // Thêm sản phẩm mới vào giỏ hàng
@@ -89,6 +103,7 @@ class CartService {
         'price': product.price,
         'imageUrl': product.imageUrl,
         'quantity': quantity,
+        'stock': latestStock, // Thêm thông tin về stock
         'addedAt': FieldValue.serverTimestamp(),
       });
     }
@@ -109,13 +124,20 @@ class CartService {
 
     if (cartItemDocs.docs.isNotEmpty) {
       final existingDoc = cartItemDocs.docs.first;
+      final data = existingDoc.data();
+      final stock = data['stock'] ?? 99; // Lấy giá trị stock hiện tại
+
       if (quantity <= 0) {
         // Xóa sản phẩm nếu số lượng <= 0
         await existingDoc.reference.delete();
       } else {
-        // Cập nhật số lượng
+        // Đảm bảo số lượng không vượt quá stock
+        final updatedQuantity = quantity > stock ? stock : quantity;
+
+        // Cập nhật số lượng, giữ nguyên stock
         await existingDoc.reference.update({
-          'quantity': quantity,
+          'quantity': updatedQuantity,
+          'stock': stock, // Giữ lại giá trị stock
         });
       }
     }
@@ -192,5 +214,79 @@ class CartService {
         .collection('cart')
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
+  }
+
+  // Cập nhật thông tin stock cho sản phẩm trong giỏ hàng
+  Future<void> updateProductStock(String productId, int stock) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return;
+
+    final cartItemRef = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .where('productId', isEqualTo: productId);
+
+    final cartItemDocs = await cartItemRef.get();
+
+    if (cartItemDocs.docs.isNotEmpty) {
+      final existingDoc = cartItemDocs.docs.first;
+      // Cập nhật stock cho sản phẩm trong giỏ hàng
+      await existingDoc.reference.update({
+        'stock': stock,
+      });
+    }
+  }
+
+  // Đồng bộ hóa thông tin stock từ sản phẩm gốc vào giỏ hàng
+  Future<void> syncCartWithProductInfo() async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return;
+
+    try {
+      final cartItems = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('cart')
+          .get();
+
+      if (cartItems.docs.isEmpty) return;
+
+      // Tạo batch để cập nhật nhiều tài liệu cùng lúc
+      final batch = _firestore.batch();
+      bool hasUpdates = false;
+
+      for (var doc in cartItems.docs) {
+        final data = doc.data();
+        final productId = data['productId'];
+
+        if (productId == null) continue;
+
+        // Lấy thông tin mới nhất từ collection products
+        final productDoc =
+            await _firestore.collection('products').doc(productId).get();
+
+        if (productDoc.exists) {
+          final productData = productDoc.data();
+          if (productData != null) {
+            // Mặc định stock là 99 nếu không có thông tin
+            final latestStock = productData['stock'] ?? 99;
+
+            // Nếu stock hiện tại khác với stock mới
+            if (data['stock'] != latestStock) {
+              batch.update(doc.reference, {'stock': latestStock});
+              hasUpdates = true;
+            }
+          }
+        }
+      }
+
+      // Thực hiện cập nhật batch nếu có thay đổi
+      if (hasUpdates) {
+        await batch.commit();
+      }
+    } catch (e) {
+      print('Lỗi khi đồng bộ giỏ hàng: $e');
+    }
   }
 }
