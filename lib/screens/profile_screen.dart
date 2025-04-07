@@ -5,6 +5,8 @@ import 'package:focusbadminton/screens/order_history_screen.dart';
 import 'package:focusbadminton/screens/favorites_screen.dart';
 import 'package:focusbadminton/screens/notification_settings_screen.dart';
 import 'package:focusbadminton/screens/help_screen.dart';
+import 'package:focusbadminton/screens/notifications_screen.dart';
+import 'package:focusbadminton/admin/send_notification_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,11 +20,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _auth = AuthService();
   bool _isLoading = false;
   User? _user;
+  int _avatarTapCount = 0;
+  final int _requiredTapsForAdmin = 7; // Số lần nhấn để mở màn hình admin
 
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
+  }
+
+  // Xử lý khi nhấn vào avatar
+  void _handleAvatarTap() {
+    setState(() {
+      _avatarTapCount++;
+    });
+
+    // Kiểm tra nếu đủ số lần nhấn để mở màn hình admin
+    if (_avatarTapCount == _requiredTapsForAdmin) {
+      // Reset số lần nhấn
+      setState(() {
+        _avatarTapCount = 0;
+      });
+
+      // Mở màn hình admin
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SendNotificationScreen(),
+        ),
+      );
+    } else if (_avatarTapCount > 0 && _avatarTapCount < _requiredTapsForAdmin) {
+      // Hiển thị số lần nhấn còn lại nếu đã nhấn ít nhất 1 lần
+      int remainingTaps = _requiredTapsForAdmin - _avatarTapCount;
+      if (remainingTaps <= 3) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Còn $remainingTaps lần nhấn nữa để mở chế độ admin'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _signOut() async {
@@ -142,19 +180,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: _user?.photoURL != null
-                              ? NetworkImage(_user!.photoURL!)
-                              : null,
-                          child: _user?.photoURL == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: Colors.grey[400],
-                                )
-                              : null,
+                        GestureDetector(
+                          onTap:
+                              _handleAvatarTap, // Gọi phương thức xử lý khi nhấn vào avatar
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage: _user?.photoURL != null
+                                ? NetworkImage(_user!.photoURL!)
+                                : null,
+                            child: _user?.photoURL == null
+                                ? Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Colors.grey[400],
+                                  )
+                                : null,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Row(
@@ -229,6 +271,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => const FavoritesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildMenuItem(
+                        icon: Icons.notifications_active,
+                        title: 'Thông báo của tôi',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsScreen(),
                             ),
                           );
                         },
