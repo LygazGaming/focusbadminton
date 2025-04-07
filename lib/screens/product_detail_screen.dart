@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:focusbadminton/services/cart_service.dart';
+import 'package:focusbadminton/services/favorite_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
@@ -20,8 +21,11 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final _productService = ProductService();
   final _cartService = CartService();
+  final _favoriteService = FavoriteService();
   Product? _product;
   bool _isLoading = true;
+  bool _isFavorite = false;
+  bool _checkingFavorite = true;
   int _quantity = 1;
 
   @override
@@ -33,16 +37,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _loadProduct() async {
     try {
       final product = await _productService.getProductById(widget.productId);
+      bool isFav = false;
+
+      // Kiểm tra xem sản phẩm có trong danh sách yêu thích không
+      try {
+        isFav = await _favoriteService.isFavorite(widget.productId);
+      } catch (e) {
+        // Không làm gì nếu có lỗi khi kiểm tra yêu thích
+      }
+
       if (mounted) {
         setState(() {
           _product = product;
+          _isFavorite = isFav;
           _isLoading = false;
+          _checkingFavorite = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _checkingFavorite = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -71,6 +87,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Không thể thêm sản phẩm vào giỏ hàng'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (_product == null) return;
+
+    try {
+      final isNowFavorite = await _favoriteService.toggleFavorite(_product!);
+      if (mounted) {
+        setState(() {
+          _isFavorite = isNowFavorite;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isNowFavorite
+                  ? 'Đã thêm vào danh sách yêu thích'
+                  : 'Đã xóa khỏi danh sách yêu thích',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -128,6 +177,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             actions: [
+              // Nút yêu thích
+              IconButton(
+                icon: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: _isFavorite ? Colors.red : null,
+                ),
+                onPressed: _checkingFavorite ? null : _toggleFavorite,
+              ),
+              // Nút chia sẻ
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:focusbadminton/auth/auth_service.dart';
 import 'package:focusbadminton/auth/login_screen.dart';
 import 'package:focusbadminton/screens/order_history_screen.dart';
+import 'package:focusbadminton/screens/favorites_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -222,7 +223,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.favorite,
                         title: 'Sản phẩm yêu thích',
                         onTap: () {
-                          // TODO: Navigate to favorites screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FavoritesScreen(),
+                            ),
+                          );
                         },
                       ),
                     ],
