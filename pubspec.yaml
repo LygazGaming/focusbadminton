@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  #Provider
+  provider: ^6.1.4
   # PayPal
   flutter_paypal: ^0.2.1
   # Firebase
@@ -45,6 +47,7 @@ dependencies:
   # Utilities
   intl: ^0.20.2
   uuid: ^4.5.1
+  url_launcher: ^6.2.5
 
   # Splash Screen
   flutter_native_splash: ^2.4.4

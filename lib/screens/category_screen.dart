@@ -8,8 +8,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String category;
+  final String? filter;
 
-  const CategoryScreen({super.key, required this.category});
+  const CategoryScreen({super.key, required this.category, this.filter});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
@@ -31,17 +32,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
     'Phụ kiện',
   ];
 
+  String? _filter;
+
   @override
   void initState() {
     super.initState();
+    // Khởi tạo giá trị ban đầu
     _selectedCategory = widget.category;
+    _filter = widget.filter;
+  }
+
+  @override
+  void didUpdateWidget(CategoryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Cập nhật khi widget thay đổi
+    if (oldWidget.category != widget.category ||
+        oldWidget.filter != widget.filter) {
+      setState(() {
+        _selectedCategory = widget.category;
+        _filter = widget.filter;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Danh mục sản phẩm'),
+        title: Text(_getTitle()),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -86,6 +104,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   onTap: () {
                     setState(() {
                       _selectedCategory = category;
+                      // Xóa filter khi chọn danh mục mới
+                      _filter = null;
                     });
                   },
                   child: Container(
@@ -165,6 +185,45 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 }
 
                 var products = snapshot.data!;
+
+                // Apply filter if specified
+                if (_filter != null) {
+                  switch (_filter) {
+                    case 'deal':
+                      products = products.where((p) => p.isHot).toList();
+                      break;
+                    case 'flash_sale':
+                      products = products.where((p) => p.isSale).toList();
+                      break;
+                    case 'seasonal':
+                      // Giả sử rằng sản phẩm theo mùa có tag isNew
+                      products = products.where((p) => p.isNew).toList();
+                      break;
+                    case 'combo':
+                      // Giả sử rằng combo có originalPrice
+                      products = products
+                          .where((p) => p.originalPrice != null)
+                          .toList();
+                      break;
+                    case 'brand_yonex':
+                      products =
+                          products.where((p) => p.brand == 'Yonex').toList();
+                      break;
+                    case 'brand_lining':
+                      products =
+                          products.where((p) => p.brand == 'Lining').toList();
+                      break;
+                    case 'brand_victor':
+                      products =
+                          products.where((p) => p.brand == 'Victor').toList();
+                      break;
+                    case 'brand_kawasaki':
+                      products =
+                          products.where((p) => p.brand == 'Kawasaki').toList();
+                      break;
+                  }
+                }
+
                 // Sort products based on selected option
                 switch (_sortBy) {
                   case 'price_asc':
@@ -375,6 +434,33 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ],
       ),
     );
+  }
+
+  String _getTitle() {
+    if (_filter != null) {
+      switch (_filter) {
+        case 'deal':
+          return 'Deal hấp dẫn';
+        case 'flash_sale':
+          return 'Flash Sale';
+        case 'seasonal':
+          return 'Sản phẩm theo mùa';
+        case 'combo':
+          return 'Combo tiết kiệm';
+        case 'brand_yonex':
+          return 'Thương hiệu: Yonex';
+        case 'brand_lining':
+          return 'Thương hiệu: Lining';
+        case 'brand_victor':
+          return 'Thương hiệu: Victor';
+        case 'brand_kawasaki':
+          return 'Thương hiệu: Kawasaki';
+        default:
+          return 'Danh mục: $_selectedCategory';
+      }
+    } else {
+      return 'Danh mục: $_selectedCategory';
+    }
   }
 
   IconData _getCategoryIcon(String category) {
