@@ -268,7 +268,7 @@ class CircularMenuWidget extends StatelessWidget {
                 Colors.green[500]!,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
-                      .navigateToCategory('Vợt');
+                      .navigateToCategory('Tất cả');
                 },
               ),
               _buildCircularMenuItem(
