@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:focusbadminton/auth/auth_service.dart';
-import 'package:focusbadminton/wrapper.dart';
 
 class VerificationScreen extends StatefulWidget {
   final User user;
@@ -29,26 +28,96 @@ class _VerificationScreenState extends State<VerificationScreen> {
     _email = widget.user.email ?? 'email của bạn';
     log('Màn hình xác nhận được khởi tạo cho email: $_email');
 
-    // Gửi email xác nhận
-    _auth.sendEmailVerificationLink();
+    // Email xác nhận đã được gửi trong AuthService.createUserWithEmailAndPassword()
+    // Nên không cần gửi lại ở đây
 
-    // Kiểm tra trạng thái xác nhận email mỗi 5 giây
-    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    // Kiểm tra trạng thái xác nhận email mỗi 2 giây
+    timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       log('Đang kiểm tra trạng thái xác nhận email...');
-      widget.user.reload().then((_) {
-        log('Email đã xác nhận: ${widget.user.emailVerified}');
-        if (widget.user.emailVerified) {
+
+      try {
+        // Lấy lại thông tin người dùng hiện tại từ Firebase
+        User? currentUser = FirebaseAuth.instance.currentUser;
+
+        if (currentUser == null) {
+          log('Không tìm thấy người dùng hiện tại');
+          return;
+        }
+
+        // Reload thông tin người dùng từ server
+        await currentUser.reload();
+
+        // Lấy lại thông tin người dùng sau khi reload
+        currentUser = FirebaseAuth.instance.currentUser;
+
+        log('Email đã xác nhận: ${currentUser?.emailVerified}');
+
+        if (currentUser != null && currentUser.emailVerified) {
           log('Email đã xác nhận, hủy timer');
           timer.cancel();
           if (mounted) {
-            Navigator.pushReplacementNamed(context, '/home');
+            // Hiển thị thông báo thành công
+            _showSuccessDialog();
           }
         }
-      });
+      } catch (error) {
+        log('Lỗi khi kiểm tra trạng thái xác nhận: $error');
+      }
     });
 
     // Bắt đầu đếm ngược cho nút gửi lại
     _startCountdownTimer();
+  }
+
+  // Hiển thị dialog thông báo xác nhận thành công
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Xác nhận thành công!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 60,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Email của bạn đã được xác nhận thành công.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Bạn có thể đăng nhập ngay bây giờ.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Lưu context trước khi gọi hàm async
+              final currentContext = context;
+
+              // Đăng xuất người dùng hiện tại
+              _auth.signout().then((_) {
+                // Chuyển đến màn hình đăng nhập
+                Navigator.pushNamedAndRemoveUntil(
+                  currentContext,
+                  '/login',
+                  (route) => false,
+                );
+              });
+            },
+            child: const Text('Đăng nhập ngay'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _startCountdownTimer() {
@@ -89,6 +158,44 @@ class _VerificationScreenState extends State<VerificationScreen> {
         title: const Text(
           "Xác thực email",
           style: TextStyle(color: Colors.white),
+        ),
+        // Vô hiệu hóa nút quay lại mặc định
+        automaticallyImplyLeading: false,
+        // Thêm nút đăng xuất thay vì nút quay lại
+        leading: IconButton(
+          icon: const Icon(Icons.logout, color: Colors.white),
+          onPressed: () {
+            // Hiển thị hộp thoại xác nhận
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Đăng xuất'),
+                content: const Text(
+                    'Bạn có chắc muốn đăng xuất và quay lại màn hình đăng nhập?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Hủy'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Lưu context trước khi gọi hàm async
+                      final currentContext = context;
+                      // Đăng xuất và quay lại màn hình đăng nhập
+                      _auth.signout().then((_) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          currentContext,
+                          '/login',
+                          (route) => false,
+                        );
+                      });
+                    },
+                    child: const Text('Đăng xuất'),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
       body: Container(
@@ -214,6 +321,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       onPressed: _isResending
                           ? null
                           : () {
+                              // Gửi lại email xác nhận khi người dùng nhấn nút gửi lại
                               _auth.sendEmailVerificationLink();
                               _startCountdownTimer();
                               _showMessage("Đã gửi lại email xác thực");
@@ -274,13 +382,37 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                   // Sign out option
                   TextButton(
-                    onPressed: () async {
-                      await _auth.signout();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Wrapper()),
-                        (route) => false,
+                    onPressed: () {
+                      // Hiển thị hộp thoại xác nhận
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Đăng xuất'),
+                          content: const Text(
+                              'Bạn có chắc muốn đăng xuất và quay lại màn hình đăng nhập?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Hủy'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Lưu context trước khi gọi hàm async
+                                final currentContext = context;
+                                // Đăng xuất và quay lại màn hình đăng nhập
+                                Navigator.pop(context); // Đóng dialog
+                                _auth.signout().then((_) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    currentContext,
+                                    '/login',
+                                    (route) => false,
+                                  );
+                                });
+                              },
+                              child: const Text('Đăng xuất'),
+                            ),
+                          ],
+                        ),
                       );
                     },
                     child: const Text(
