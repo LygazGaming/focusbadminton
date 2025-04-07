@@ -63,10 +63,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[900],
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue[900],
+                      elevation: 2,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
+                      ),
+                      side: BorderSide(color: Colors.blue[900]!),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: const Text(

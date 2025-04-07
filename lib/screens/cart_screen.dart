@@ -123,7 +123,13 @@ class _CartScreenState extends State<CartScreen> {
                   CustomButton(
                     label: 'Tiếp tục mua sắm',
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[900],
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue[900],
+                      elevation: 2,
+                      side: BorderSide(color: Colors.blue[900]!),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
