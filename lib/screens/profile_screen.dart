@@ -3,6 +3,8 @@ import 'package:focusbadminton/auth/auth_service.dart';
 import 'package:focusbadminton/auth/login_screen.dart';
 import 'package:focusbadminton/screens/order_history_screen.dart';
 import 'package:focusbadminton/screens/favorites_screen.dart';
+import 'package:focusbadminton/screens/notification_settings_screen.dart';
+import 'package:focusbadminton/screens/help_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -241,14 +243,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.notifications,
                         title: 'Thông báo',
                         onTap: () {
-                          // TODO: Navigate to notification settings screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const NotificationSettingsScreen(),
+                            ),
+                          );
                         },
                       ),
                       _buildMenuItem(
                         icon: Icons.help,
                         title: 'Trợ giúp',
                         onTap: () {
-                          // TODO: Navigate to help screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HelpScreen(),
+                            ),
+                          );
                         },
                       ),
                     ],
