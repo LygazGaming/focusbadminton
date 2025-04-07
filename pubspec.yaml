@@ -47,6 +47,7 @@ dependencies:
   # Utilities
   intl: ^0.20.2
   uuid: ^4.5.1
+  # Url
   url_launcher: ^6.2.5
 
   # Splash Screen

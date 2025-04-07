@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:focusbadminton/services/cart_service.dart';
@@ -127,6 +128,169 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  // Phương thức để chia sẻ thông tin sản phẩm
+  void _shareProduct() {
+    if (_product == null) return;
+
+    try {
+      // Tạo nội dung chia sẻ
+      final String productName = _product!.name;
+      final String productPrice = NumberFormat.currency(
+        locale: 'vi_VN',
+        symbol: '₫',
+        decimalDigits: 0,
+      ).format(_product!.price);
+
+      final String shareText =
+          'Đã tìm thấy sản phẩm tuyệt vời trên ứng dụng Focus Badminton!\n\n'
+          '$productName\n'
+          'Giá: $productPrice\n\n'
+          'Mã sản phẩm: ${_product!.id}\n'
+          'Bạn có thể tìm sản phẩm này trong ứng dụng Focus Badminton.';
+
+      // Sao chép vào clipboard
+      Clipboard.setData(ClipboardData(text: shareText));
+
+      // Hiển thị menu tùy chọn
+      _showShareOptions(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể chia sẻ: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // Hiển thị menu tùy chọn chia sẻ
+  void _showShareOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Chia sẻ sản phẩm',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Đã sao chép thông tin sản phẩm vào clipboard',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(
+                  icon: Icons.message,
+                  label: 'Tin nhắn',
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Đã sao chép thông tin sản phẩm. Bạn có thể dán vào tin nhắn'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+                _buildShareOption(
+                  icon: Icons.chat_bubble,
+                  label: 'Zalo',
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Đã sao chép thông tin sản phẩm. Bạn có thể dán vào Zalo'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+                _buildShareOption(
+                  icon: Icons.facebook,
+                  label: 'Facebook',
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Đã sao chép thông tin sản phẩm. Bạn có thể dán vào Facebook'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+                _buildShareOption(
+                  icon: Icons.email,
+                  label: 'Email',
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Đã sao chép thông tin sản phẩm. Bạn có thể dán vào email'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget hiển thị tùy chọn chia sẻ
+  Widget _buildShareOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: Colors.blue[900], size: 24),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -188,9 +352,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               // Nút chia sẻ
               IconButton(
                 icon: const Icon(Icons.share),
-                onPressed: () {
-                  // TODO: Implement share functionality
-                },
+                onPressed: _shareProduct,
               ),
             ],
           ),
