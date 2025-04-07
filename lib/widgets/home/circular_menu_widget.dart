@@ -244,37 +244,45 @@ class CircularMenuWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.blue[900],
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+          bottomLeft: Radius.circular(25),
+          bottomRight: Radius.circular(25),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(30),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
         ],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blue[800]!,
+            Colors.blue[900]!,
+          ],
+        ),
       ),
-      padding: const EdgeInsets.only(top: 10, bottom: 25),
+      padding: const EdgeInsets.only(top: 15, bottom: 25),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCircularMenuItem(
-                Icons.menu,
+                Icons.grid_view_rounded,
                 'Danh mục',
-                Colors.green[500]!,
+                Colors.green[600]!,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
                       .navigateToCategory('Tất cả');
                 },
               ),
               _buildCircularMenuItem(
-                Icons.new_releases,
+                Icons.new_releases_rounded,
                 'Hàng mới',
-                Colors.orange,
+                Colors.orange[600]!,
                 isSpecial: true,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
@@ -282,9 +290,9 @@ class CircularMenuWidget extends StatelessWidget {
                 },
               ),
               _buildCircularMenuItem(
-                Icons.article,
+                Icons.newspaper_rounded,
                 'Tin tức',
-                Colors.green[500]!,
+                Colors.teal[500]!,
                 onTap: () {
                   _showInfoDialog(
                     context,
@@ -294,17 +302,17 @@ class CircularMenuWidget extends StatelessWidget {
                 },
               ),
               _buildCircularMenuItem(
-                Icons.support_agent,
+                Icons.headset_mic_rounded,
                 'CSKH',
-                Colors.blue[400]!,
+                Colors.blue[500]!,
                 onTap: () {
                   _showCustomerService(context);
                 },
               ),
               _buildCircularMenuItem(
-                Icons.location_on,
-                'Địa chỉ sân',
-                Colors.grey[400]!,
+                Icons.sports_tennis_rounded,
+                'Sân cầu lông',
+                Colors.indigo[400]!,
                 onTap: () {
                   _showCourtLocations(context);
                 },
@@ -316,9 +324,9 @@ class CircularMenuWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCircularMenuItem(
-                Icons.local_fire_department,
+                Icons.local_fire_department_rounded,
                 'Deal',
-                Colors.deepOrange,
+                Colors.deepOrange[600]!,
                 isHotSale: true,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
@@ -326,27 +334,27 @@ class CircularMenuWidget extends StatelessWidget {
                 },
               ),
               _buildCircularMenuItem(
-                Icons.flash_on,
+                Icons.bolt_rounded,
                 'Flash Sale',
-                Colors.amber[700]!,
+                Colors.amber[600]!,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
                       .navigateToCategory('Tất cả', filter: 'flash_sale');
                 },
               ),
               _buildCircularMenuItem(
-                Icons.eco,
+                Icons.eco_rounded,
                 'Theo mùa',
-                Colors.lightGreen[500]!,
+                Colors.lightGreen[600]!,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
                       .navigateToCategory('Tất cả', filter: 'seasonal');
                 },
               ),
               _buildCircularMenuItem(
-                Icons.card_giftcard,
+                Icons.card_giftcard_rounded,
                 'Combo',
-                Colors.red,
+                Colors.red[600]!,
                 isCombo: true,
                 onTap: () {
                   Provider.of<HomeScreenProvider>(context, listen: false)
@@ -354,9 +362,9 @@ class CircularMenuWidget extends StatelessWidget {
                 },
               ),
               _buildCircularMenuItem(
-                Icons.menu_book,
+                Icons.menu_book_rounded,
                 'Cẩm nang',
-                Colors.purple,
+                Colors.purple[600]!,
                 onTap: () {
                   _showInfoDialog(
                     context,
@@ -377,115 +385,187 @@ class CircularMenuWidget extends StatelessWidget {
       bool isHotSale = false,
       bool isCombo = false,
       VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(30),
+        splashColor: color.withOpacity(0.3),
+        highlightColor: color.withOpacity(0.1),
+        child: Column(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    Colors.white.withOpacity(0.9),
+                  ],
                 ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 28,
-                  ),
-                ),
-                if (isSpecial)
+              ),
+              child: Stack(
+                children: [
+                  // Hiệu ứng ánh sáng
                   Positioned(
-                    right: 0,
-                    top: 0,
+                    top: 2,
+                    left: 2,
                     child: Container(
-                      width: 15,
-                      height: 15,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'N',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        gradient: RadialGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.8),
+                            Colors.white.withOpacity(0.0),
+                          ],
+                          stops: const [0.0, 1.0],
                         ),
                       ),
                     ),
                   ),
-                if (isHotSale)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: Container(
-                      width: 15,
-                      height: 15,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'H',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                  // Icon chính
+                  Center(
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 28,
+                    ),
+                  ),
+                  // Badge cho Hàng mới
+                  if (isSpecial)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'N',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                if (isCombo)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: Container(
-                      width: 15,
-                      height: 15,
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'C',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                  // Badge cho Deal
+                  if (isHotSale)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'H',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
+                  // Badge cho Combo
+                  if (isCombo)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'C',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 1),
+                    blurRadius: 3,
+                    color: Color.fromRGBO(0, 0, 0, 0.3),
                   ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
