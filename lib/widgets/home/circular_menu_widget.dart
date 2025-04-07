@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:focusbadminton/providers/home_screen_provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CircularMenuWidget extends StatelessWidget {
   const CircularMenuWidget({super.key});
@@ -60,33 +60,9 @@ class CircularMenuWidget extends StatelessWidget {
                     controller: scrollController,
                     children: [
                       _buildCourtLocationItem(
-                        'Sân cầu lông Rạch Miễu',
-                        'Số 1 Đường Rạch Miễu, Phường 5, Quận Phú Nhuận, TP.HCM',
-                        '0123 456 789',
-                        context,
-                      ),
-                      _buildCourtLocationItem(
-                        'Sân cầu lông Thảo Điền',
-                        'Số 15 Đường Quốc Hương, Phường Thảo Điền, Quận 2, TP.HCM',
-                        '0987 654 321',
-                        context,
-                      ),
-                      _buildCourtLocationItem(
-                        'Sân cầu lông Tân Bình',
-                        'Số 123 Đường Cộng Hòa, Phường 12, Quận Tân Bình, TP.HCM',
-                        '0909 123 456',
-                        context,
-                      ),
-                      _buildCourtLocationItem(
-                        'Sân cầu lông Quận 7',
-                        'Số 456 Đường Nguyễn Thị Thập, Phường Tân Phong, Quận 7, TP.HCM',
-                        '0908 765 432',
-                        context,
-                      ),
-                      _buildCourtLocationItem(
-                        'Sân cầu lông Quận 10',
-                        'Số 789 Đường 3/2, Phường 11, Quận 10, TP.HCM',
-                        '0912 345 678',
+                        'Sân Cầu Lông Focus',
+                        '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, Hồ Chí Minh 700000, Việt Nam',
+                        '0905353230',
                         context,
                       ),
                     ],
@@ -123,23 +99,22 @@ class CircularMenuWidget extends StatelessWidget {
             _buildContactItem(
               Icons.phone,
               'Hotline',
-              '0123 456 789',
-              () => _launchUrl('tel:0123456789'),
+              '0905353230',
+              () => _launchUrl('tel:0905353230'),
             ),
             const Divider(),
             _buildContactItem(
               Icons.email,
               'Email',
-              'support@focusbadminton.com',
-              () => _launchUrl('mailto:support@focusbadminton.com'),
+              'longa4609@gmail.com',
+              () => _launchUrl('mailto:longa4609@gmail.com'),
             ),
             const Divider(),
             _buildContactItem(
-              Icons.chat_bubble,
+              Icons.chat_bubble_outline,
               'Zalo',
-              '0123 456 789',
-              () =>
-                  _showInfoDialog(context, 'Zalo', 'Tính năng đang phát triển'),
+              '0905353230',
+              () => _launchUrl('https://zalo.me/0905353230'),
             ),
             const Divider(),
             _buildContactItem(
@@ -166,8 +141,29 @@ class CircularMenuWidget extends StatelessWidget {
   // Widget hiển thị thông tin liên hệ
   Widget _buildContactItem(
       IconData icon, String title, String subtitle, VoidCallback onTap) {
+    // Widget cho biểu tượng
+    Widget leadingWidget;
+
+    // Sử dụng SVG cho Zalo và Facebook
+    if (title == 'Zalo') {
+      leadingWidget = SvgPicture.asset(
+        'assets/icons/zalo.svg',
+        width: 30,
+        height: 30,
+      );
+    } else if (title == 'Facebook') {
+      leadingWidget = SvgPicture.asset(
+        'assets/icons/facebook.svg',
+        width: 30,
+        height: 30,
+      );
+    } else {
+      // Sử dụng biểu tượng mặc định cho các trường hợp khác
+      leadingWidget = Icon(icon, color: Colors.blue[900]);
+    }
+
     return ListTile(
-      leading: Icon(icon, color: Colors.blue[900]),
+      leading: leadingWidget,
       title: Text(title),
       subtitle: Text(subtitle),
       onTap: onTap,
