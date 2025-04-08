@@ -52,11 +52,14 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   const SizedBox(height: 50),
                   // Logo
-                  SizedBox(
-                    height: 120,
+                  Container(
+                    constraints: const BoxConstraints(
+                      minWidth: 200,
+                      maxWidth: 240,
+                    ),
                     child: Image.asset(
                       'assets/images/logo.png',
-                      fit: BoxFit.contain,
+                      fit: BoxFit.fitWidth,
                       errorBuilder: (context, error, stackTrace) => Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

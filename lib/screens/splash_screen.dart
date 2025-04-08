@@ -66,10 +66,15 @@ class _SplashScreenState extends State<SplashScreen>
                 offset: Offset(0, 50 * (1 - _animation.value)),
                 child: Opacity(
                   opacity: _animation.value,
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 200,
-                    height: 200,
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minWidth: 280,
+                      maxWidth: 320,
+                    ),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
                 ),
               );
