@@ -87,7 +87,7 @@ class PaymentService {
                       .map((item) => {
                             "name": item['name'],
                             "quantity": item['quantity'].toString(),
-                            "price": (double.parse(item['price']) / 23000)
+                            "price": (double.parse(item['price']) / 25000)
                                 .toStringAsFixed(2),
                             "currency": currency,
                           })
