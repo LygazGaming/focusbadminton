@@ -29,7 +29,7 @@
 ## Hướng dẫn cài đặt
 1. Clone repo:  
    ```bash
-   git clone https://github.com/username/FocusBadminton.git
+   git clone https://github.com/LygazGaming/focusbadminton.git
 2. Cài dependencies:
       ```bash
    flutter pub get
