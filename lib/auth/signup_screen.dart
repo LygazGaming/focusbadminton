@@ -54,8 +54,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   // Logo
                   Container(
                     constraints: const BoxConstraints(
-                      minWidth: 200,
-                      maxWidth: 240,
+                      minWidth: 150,
+                      maxWidth: 180,
                     ),
                     child: Image.asset(
                       'assets/images/logo.png',
