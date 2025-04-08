@@ -37,7 +37,7 @@
       ```bash
    flutter run
 ## Liên hệ
-- Địa chỉ: 18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, TP.HCM
-- Điện thoại: 0905353230
-- Zalo: https://zalo.me/0905353230
+- **Địa chỉ**: 18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, TP.HCM  
+- **Điện thoại**: 0905353230  
+- **Zalo**: [![Zalo](https://img.shields.io/badge/Zalo-0905353230-00A4FF?style=flat&logo=zalo)](https://zalo.me/0905353230)  
 ## Developed with ❤️ by LygazGaming
