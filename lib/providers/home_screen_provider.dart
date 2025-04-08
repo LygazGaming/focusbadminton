@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:focusbadminton/auth/login_screen.dart';
 import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/services/product_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreenProvider with ChangeNotifier {
   final ProductService _productService = ProductService();
@@ -102,5 +103,17 @@ class HomeScreenProvider with ChangeNotifier {
     _categoryFilter = filter;
     _selectedIndex = 1; // Chuyển đến tab danh mục
     notifyListeners();
+  }
+
+  // Phương thức mở bản đồ Google Maps với địa chỉ cụ thể
+  Future<void> openMap(String address) async {
+    final Uri googleMapsUrl = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}');
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('Không thể mở bản đồ với địa chỉ: $address');
+    }
   }
 }

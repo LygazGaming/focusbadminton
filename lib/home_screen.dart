@@ -11,6 +11,7 @@ import 'package:focusbadminton/widgets/home/search_results_widget.dart';
 import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/screens/cart_screen.dart';
 import 'package:focusbadminton/screens/profile_screen.dart';
+import 'package:focusbadminton/screens/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,31 +57,76 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: SearchBarWidget(),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/icons/box_icon.svg',
-                            height: 24,
-                            colorFilter: const ColorFilter.mode(
-                                Colors.amber, BlendMode.srcIn),
+                        // Nút theo dõi đơn hàng
+                        GestureDetector(
+                          onTap: () {
+                            // Hiển thị màn hình theo dõi đơn hàng
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Xem đơn hàng của bạn'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            // TODO: Thêm màn hình theo dõi đơn hàng
+                            // Navigator.push(context, MaterialPageRoute(
+                            //   builder: (context) => OrderTrackingScreen(),
+                            // ));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withAlpha(51), // 0.2 opacity
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/box_icon.svg',
+                              height: 24,
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.amber, BlendMode.srcIn),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/icons/location_icon.svg',
-                            height: 24,
-                            colorFilter: const ColorFilter.mode(
-                                Colors.amber, BlendMode.srcIn),
+                        // Nút hiển thị địa chỉ cửa hàng
+                        GestureDetector(
+                          onTap: () {
+                            // Hiển thị thông tin địa chỉ cửa hàng
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Sân Cầu Lông Focus'),
+                                content: const Text(
+                                    '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Đóng'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      // Mở bản đồ Google Maps
+                                      provider.openMap(
+                                          '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM');
+                                    },
+                                    child: const Text('Chỉ đường'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withAlpha(51), // 0.2 opacity
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/location_icon.svg',
+                              height: 24,
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.amber, BlendMode.srcIn),
+                            ),
                           ),
                         ),
                       ],
@@ -126,7 +172,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
+                // Tab thông báo
+                const NotificationsScreen(),
+                // Tab giỏ hàng
                 const CartScreen(),
+                // Tab tài khoản
                 const ProfileScreen(),
               ],
             ),
