@@ -60,6 +60,13 @@ class HomeScreenProvider with ChangeNotifier {
       _categoryFilter = null;
     }
 
+    // Tắt chế độ tìm kiếm khi chuyển tab
+    if (_isSearching) {
+      _isSearching = false;
+      _searchQuery = '';
+      searchController.clear();
+    }
+
     notifyListeners();
   }
 

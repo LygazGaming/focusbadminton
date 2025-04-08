@@ -66,12 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            body: IndexedStack(
-              index: provider.selectedIndex,
+            body: Stack(
               children: [
-                // Trang chủ
-                Stack(
+                IndexedStack(
+                  index: provider.selectedIndex,
                   children: [
+                    // Trang chủ
                     SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,25 +90,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    // Overlay tìm kiếm
-                    if (provider.isSearching) const SearchResultsWidget(),
+                    // Tab danh mục
+                    Consumer<HomeScreenProvider>(
+                      builder: (context, provider, _) {
+                        return CategoryScreen(
+                          category: provider.selectedCategory,
+                          filter: provider.categoryFilter,
+                        );
+                      },
+                    ),
+                    // Tab thông báo
+                    const NotificationsScreen(),
+                    // Tab giỏ hàng
+                    const CartScreen(),
+                    // Tab tài khoản
+                    const ProfileScreen(),
                   ],
                 ),
-                // Tab danh mục
-                Consumer<HomeScreenProvider>(
-                  builder: (context, provider, _) {
-                    return CategoryScreen(
-                      category: provider.selectedCategory,
-                      filter: provider.categoryFilter,
-                    );
-                  },
-                ),
-                // Tab thông báo
-                const NotificationsScreen(),
-                // Tab giỏ hàng
-                const CartScreen(),
-                // Tab tài khoản
-                const ProfileScreen(),
+                // Overlay tìm kiếm - hiển thị trên tất cả các tab
+                if (provider.isSearching) const SearchResultsWidget(),
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(

@@ -128,200 +128,221 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tài khoản'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Profile header
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: _user?.photoURL != null
-                              ? NetworkImage(_user!.photoURL!)
-                              : null,
-                          child: _user?.photoURL == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: Colors.grey[400],
-                                )
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      children: [
+        // Tiêu đề
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Tài khoản',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Nội dung
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Profile header
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
                           children: [
-                            Text(
-                              _user?.displayName != null &&
-                                      _user!.displayName!.isNotEmpty
-                                  ? _user!.displayName!
-                                  : _user?.email?.split('@').first ??
-                                      'Người dùng',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey[200],
+                              backgroundImage: _user?.photoURL != null
+                                  ? NetworkImage(_user!.photoURL!)
+                                  : null,
+                              child: _user?.photoURL == null
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 50,
+                                      color: Colors.grey[400],
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _user?.displayName != null &&
+                                          _user!.displayName!.isNotEmpty
+                                      ? _user!.displayName!
+                                      : _user?.email?.split('@').first ??
+                                          'Người dùng',
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (_user?.displayName == null ||
+                                    _user!.displayName!.isEmpty)
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, size: 16),
+                                    tooltip: 'Cập nhật tên',
+                                    onPressed: () => _showUpdateProfileDialog(),
+                                  ),
+                              ],
                             ),
                             if (_user?.displayName == null ||
                                 _user!.displayName!.isEmpty)
-                              IconButton(
-                                icon: const Icon(Icons.edit, size: 16),
-                                tooltip: 'Cập nhật tên',
-                                onPressed: () => _showUpdateProfileDialog(),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  'Nhấn vào biểu tượng bút để cập nhật tên của bạn',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue[700],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                               ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _user?.email ?? 'Chưa cập nhật email',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ],
                         ),
-                        if (_user?.displayName == null ||
-                            _user!.displayName!.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              'Nhấn vào biểu tượng bút để cập nhật tên của bạn',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue[700],
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
+                      ),
+
+                      // Profile sections
+                      _buildSection(
+                        title: 'Tài khoản',
+                        children: [
+                          _buildMenuItem(
+                            icon: Icons.shopping_bag,
+                            title: 'Đơn hàng của tôi',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const OrderHistoryScreen(),
+                                ),
+                              );
+                            },
                           ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _user?.email ?? 'Chưa cập nhật email',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Profile sections
-                  _buildSection(
-                    title: 'Tài khoản',
-                    children: [
-                      _buildMenuItem(
-                        icon: Icons.shopping_bag,
-                        title: 'Đơn hàng của tôi',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const OrderHistoryScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildMenuItem(
-                        icon: Icons.favorite,
-                        title: 'Sản phẩm yêu thích',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const FavoritesScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-
-                  _buildSection(
-                    title: 'Cài đặt',
-                    children: [
-                      _buildMenuItem(
-                        icon: Icons.notifications,
-                        title: 'Thông báo',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const NotificationSettingsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildMenuItem(
-                        icon: Icons.help,
-                        title: 'Trợ giúp',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HelpScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-
-                  // Sign out button
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF4B4B), Color(0xFFFF0000)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.red.withOpacity(0.3),
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                          _buildMenuItem(
+                            icon: Icons.favorite,
+                            title: 'Sản phẩm yêu thích',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const FavoritesScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: _signOut,
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.logout_rounded,
-                                  color: Colors.white,
-                                  size: 24,
+
+                      _buildSection(
+                        title: 'Cài đặt',
+                        children: [
+                          _buildMenuItem(
+                            icon: Icons.notifications,
+                            title: 'Thông báo',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationSettingsScreen(),
                                 ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Đăng xuất',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
-                                  ),
+                              );
+                            },
+                          ),
+                          _buildMenuItem(
+                            icon: Icons.help,
+                            title: 'Trợ giúp',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HelpScreen(),
                                 ),
-                              ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+
+                      // Sign out button
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF4B4B), Color(0xFFFF0000)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.3),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _signOut,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.logout_rounded,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Đăng xuất',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+        ),
+      ],
     );
   }
 

@@ -79,7 +79,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       // Cập nhật trạng thái đã đọc trong danh sách
       setState(() {
-        final index = _notifications.indexWhere((n) => n['id'] == notificationId);
+        final index =
+            _notifications.indexWhere((n) => n['id'] == notificationId);
         if (index != -1) {
           _notifications[index]['isRead'] = true;
         }
@@ -133,21 +134,38 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Thông báo'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadNotifications,
+    return Column(
+      children: [
+        // Tiêu đề và nút làm mới
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Thông báo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _loadNotifications,
+              ),
+            ],
           ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _notifications.isEmpty
-              ? _buildEmptyState()
-              : _buildNotificationsList(),
+        ),
+        // Nội dung
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _notifications.isEmpty
+                  ? _buildEmptyState()
+                  : _buildNotificationsList(),
+        ),
+      ],
     );
   }
 
@@ -205,7 +223,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       Text(
                         notification['title'] ?? 'Thông báo mới',
                         style: TextStyle(
-                          fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                          fontWeight:
+                              isRead ? FontWeight.normal : FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
