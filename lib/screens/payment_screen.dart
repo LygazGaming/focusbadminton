@@ -25,13 +25,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     try {
       // Tạo danh sách sản phẩm cho PayPal
-      final items = widget.cart.items
-          .map((item) => {
-                'name': item.product.name,
-                'quantity': item.quantity,
-                'price': item.product.price.toString(),
-              })
-          .toList();
+      final items = widget.cart.items.map((item) {
+        // Đảm bảo tên sản phẩm không quá dài (PayPal giới hạn 127 ký tự)
+        String productName = item.product.name;
+        if (productName.length > 120) {
+          productName = "${productName.substring(0, 117)}...";
+        }
+
+        return {
+          'name': productName,
+          'quantity': item.quantity,
+          'price': item.product.price.toString(),
+        };
+      }).toList();
 
       // Tạo đơn hàng mới
       final orderId = await _paymentService.createOrder(
@@ -41,24 +47,53 @@ class _PaymentScreenState extends State<PaymentScreen> {
       );
 
       // Xử lý thanh toán PayPal
-      await _paymentService.processPayPalPayment(
-        context: context,
-        amount: widget.cart.total,
-        currency: 'USD',
-        items: items,
-        orderId: orderId,
-      );
+      try {
+        // Kiểm tra mounted trước khi gọi processPayPalPayment
+        if (!mounted) return;
+
+        await _paymentService.processPayPalPayment(
+          context: context,
+          amount: widget.cart.total / 25000, // Chuyển đổi VND sang USD
+          currency: 'USD',
+          items: items,
+          orderId: orderId,
+        );
+
+        // Kiểm tra mounted trước khi hiển thị thông báo thành công
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Thanh toán thành công!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        // Kiểm tra mounted trước khi hiển thị thông báo lỗi
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Có lỗi xảy ra: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Có lỗi xảy ra: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Có lỗi xảy ra: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

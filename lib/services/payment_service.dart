@@ -58,8 +58,48 @@ class PaymentService {
     required String orderId,
   }) async {
     try {
-      // Làm tròn số tiền để tránh lỗi
+      // Chuyển đổi và làm tròn số tiền
       final roundedAmount = double.parse(amount.toStringAsFixed(2));
+
+      // Tính toán lại giá trị của từng sản phẩm để đảm bảo tổng khớp với amount
+      final paypalItems = <Map<String, dynamic>>[];
+      double itemsTotal = 0.0;
+
+      // Chuyển đổi từng sản phẩm
+      for (var item in items) {
+        final quantity = item['quantity'] as int;
+        final priceInUSD = double.parse(
+            (double.parse(item['price']) / 25000).toStringAsFixed(2));
+        final itemTotal = priceInUSD * quantity;
+
+        paypalItems.add({
+          "name": item['name'],
+          "quantity": quantity.toString(),
+          "price": priceInUSD.toStringAsFixed(2),
+          "currency": currency,
+        });
+
+        itemsTotal += itemTotal;
+      }
+
+      // Điều chỉnh giá của sản phẩm cuối cùng nếu có sự chênh lệch
+      if (paypalItems.isNotEmpty && itemsTotal != roundedAmount) {
+        final lastItem = paypalItems.last;
+        final diff = roundedAmount -
+            (itemsTotal -
+                (double.parse(lastItem["price"]) *
+                    int.parse(lastItem["quantity"])));
+        final newPrice =
+            (diff / int.parse(lastItem["quantity"])).toStringAsFixed(2);
+        lastItem["price"] = newPrice;
+      }
+
+      // Kiểm tra lại tổng
+      double checkTotal = 0.0;
+      for (var item in paypalItems) {
+        checkTotal += double.parse(item["price"]) * int.parse(item["quantity"]);
+      }
+      print("Tổng kiểm tra: $checkTotal, Tổng yêu cầu: $roundedAmount");
 
       // Lưu context reference để kiểm tra mounted
       final navigatorContext = context;
@@ -78,20 +118,12 @@ class PaymentService {
             transactions: [
               {
                 "amount": {
-                  "total": roundedAmount.toString(),
+                  "total": roundedAmount.toStringAsFixed(2),
                   "currency": currency,
                 },
                 "description": "Thanh toán đơn hàng #$orderId",
                 "item_list": {
-                  "items": items
-                      .map((item) => {
-                            "name": item['name'],
-                            "quantity": item['quantity'].toString(),
-                            "price": (double.parse(item['price']) / 25000)
-                                .toStringAsFixed(2),
-                            "currency": currency,
-                          })
-                      .toList(),
+                  "items": paypalItems,
                 },
               }
             ],

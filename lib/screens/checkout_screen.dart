@@ -340,8 +340,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Chuyển đổi các sản phẩm thành định dạng cho PayPal
       final items = cartItems.map((item) {
+        // Đảm bảo tên sản phẩm không quá dài (PayPal giới hạn 127 ký tự)
+        String productName = item.product.name;
+        if (productName.length > 120) {
+          productName = "${productName.substring(0, 117)}...";
+        }
+
         return {
-          'name': item.product.name,
+          'name': productName,
           'quantity': item.quantity,
           'price': item.product.price.toString(),
         };
@@ -367,7 +373,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         try {
           await _paymentService.processPayPalPayment(
             context: context,
-            amount: total / 23000, // Chuyển đổi VND sang USD
+            amount: total / 25000, // Chuyển đổi VND sang USD
             currency: 'USD',
             items: items,
             orderId: orderId,
