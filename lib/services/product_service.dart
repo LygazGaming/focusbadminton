@@ -90,6 +90,34 @@ class ProductService {
     });
   }
 
+  // Lấy sản phẩm combo
+  Stream<List<Product>> getComboProducts() {
+    developer.log('Bắt đầu lấy sản phẩm combo');
+    return _firestore
+        .collection('products')
+        .where('isCombo', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      developer.log('Số lượng sản phẩm combo: ${snapshot.docs.length}');
+      return snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    });
+  }
+
+  // Lấy sản phẩm theo mùa
+  Stream<List<Product>> getSeasonalProducts() {
+    developer.log('Bắt đầu lấy sản phẩm theo mùa');
+    return _firestore
+        .collection('products')
+        .where('isSeasonal', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      developer.log('Số lượng sản phẩm theo mùa: ${snapshot.docs.length}');
+      return snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    });
+  }
+
   // Tìm kiếm sản phẩm
   Stream<List<Product>> searchProducts(String query) {
     developer.log('Bắt đầu tìm kiếm sản phẩm với từ khóa: $query');

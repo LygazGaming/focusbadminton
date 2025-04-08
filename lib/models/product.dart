@@ -19,6 +19,8 @@ class Product {
   final bool isHot;
   final bool isNew;
   final bool isSale;
+  final bool isCombo;
+  final bool isSeasonal;
 
   Product({
     required this.id,
@@ -39,6 +41,8 @@ class Product {
     this.isHot = false,
     this.isNew = false,
     this.isSale = false,
+    this.isCombo = false,
+    this.isSeasonal = false,
   });
 
   factory Product.fromMap(Map<String, dynamic> map, String id) {
@@ -69,6 +73,8 @@ class Product {
       isHot: map['isHot'] ?? false,
       isNew: map['isNew'] ?? false,
       isSale: map['isSale'] ?? false,
+      isCombo: map['isCombo'] ?? false,
+      isSeasonal: map['isSeasonal'] ?? false,
     );
   }
 
@@ -102,6 +108,8 @@ class Product {
       isHot: data['isHot'] ?? false,
       isNew: data['isNew'] ?? false,
       isSale: data['isSale'] ?? false,
+      isCombo: data['isCombo'] ?? false,
+      isSeasonal: data['isSeasonal'] ?? false,
     );
   }
 
@@ -124,6 +132,8 @@ class Product {
       'isHot': isHot,
       'isNew': isNew,
       'isSale': isSale,
+      'isCombo': isCombo,
+      'isSeasonal': isSeasonal,
     };
   }
 
@@ -145,6 +155,8 @@ class Product {
     bool? isHot,
     bool? isNew,
     bool? isSale,
+    bool? isCombo,
+    bool? isSeasonal,
   }) {
     return Product(
       id: id,
@@ -165,6 +177,8 @@ class Product {
       isHot: isHot ?? this.isHot,
       isNew: isNew ?? this.isNew,
       isSale: isSale ?? this.isSale,
+      isCombo: isCombo ?? this.isCombo,
+      isSeasonal: isSeasonal ?? this.isSeasonal,
     );
   }
 }

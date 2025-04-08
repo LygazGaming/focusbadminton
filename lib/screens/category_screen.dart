@@ -3,8 +3,10 @@ import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/screens/product_detail_screen.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:focusbadminton/widgets/button.dart';
+import 'package:focusbadminton/providers/home_screen_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String category;
@@ -154,9 +156,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           // Products grid bên phải
           Expanded(
             child: StreamBuilder<List<Product>>(
-              stream: _selectedCategory == 'Tất cả'
-                  ? _productService.getAllProducts()
-                  : _productService.getProductsByCategory(_selectedCategory),
+              stream: _getProductStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -167,17 +167,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Không có sản phẩm nào',
-                          style: TextStyle(fontSize: 18),
+                        Icon(
+                          _getEmptyStateIcon(),
+                          size: 70,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _getEmptyStateMessage(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         const SizedBox(height: 16),
                         CustomButton(
-                          label: 'Quay lại',
+                          label: 'Quay lại trang chủ',
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue[900],
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            // Thay vì pop, chuyển về tab trang chủ an toàn hơn
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              // Nếu không thể pop, chuyển về tab trang chủ
+                              Provider.of<HomeScreenProvider>(context,
+                                      listen: false)
+                                  .setSelectedIndex(0);
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -196,14 +213,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       products = products.where((p) => p.isSale).toList();
                       break;
                     case 'seasonal':
-                      // Giả sử rằng sản phẩm theo mùa có tag isNew
-                      products = products.where((p) => p.isNew).toList();
+                      // Lọc sản phẩm theo mùa
+                      products = products.where((p) => p.isSeasonal).toList();
                       break;
                     case 'combo':
-                      // Giả sử rằng combo có originalPrice
-                      products = products
-                          .where((p) => p.originalPrice != null)
-                          .toList();
+                      // Lọc sản phẩm combo
+                      products = products.where((p) => p.isCombo).toList();
                       break;
                     case 'brand_yonex':
                       products =
@@ -267,7 +282,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withAlpha(26), // 0.1 opacity
                               spreadRadius: 1,
                               blurRadius: 4,
                               offset: const Offset(0, 2),
@@ -481,6 +496,63 @@ class _CategoryScreenState extends State<CategoryScreen> {
         return Icons.settings;
       default:
         return Icons.category;
+    }
+  }
+
+  // Phương thức để lấy stream sản phẩm phù hợp
+  Stream<List<Product>> _getProductStream() {
+    // Xử lý các trường hợp đặc biệt
+    if (_selectedCategory == 'Mới') {
+      return _productService.getNewProducts();
+    } else if (_selectedCategory == 'Tất cả') {
+      // Nếu có filter đặc biệt cho Tất cả
+      if (_filter == 'seasonal') {
+        return _productService.getSeasonalProducts();
+      } else if (_filter == 'combo') {
+        return _productService.getComboProducts();
+      } else if (_filter == 'deal') {
+        return _productService.getHotProducts();
+      } else if (_filter == 'flash_sale') {
+        return _productService.getSaleProducts();
+      } else {
+        return _productService.getAllProducts();
+      }
+    } else {
+      return _productService.getProductsByCategory(_selectedCategory);
+    }
+  }
+
+  // Lấy biểu tượng cho trạng thái trống
+  IconData _getEmptyStateIcon() {
+    if (_filter == 'combo') {
+      return Icons.card_giftcard;
+    } else if (_filter == 'seasonal') {
+      return Icons.eco;
+    } else if (_filter == 'deal') {
+      return Icons.local_fire_department;
+    } else if (_filter == 'flash_sale') {
+      return Icons.bolt;
+    } else if (_selectedCategory == 'Mới') {
+      return Icons.new_releases;
+    } else {
+      return Icons.inventory_2;
+    }
+  }
+
+  // Lấy thông báo cho trạng thái trống
+  String _getEmptyStateMessage() {
+    if (_filter == 'combo') {
+      return 'Hiện tại chưa có sản phẩm combo nào\nVui lòng quay lại sau!';
+    } else if (_filter == 'seasonal') {
+      return 'Hiện tại chưa có sản phẩm theo mùa nào\nVui lòng quay lại sau!';
+    } else if (_filter == 'deal') {
+      return 'Hiện tại chưa có deal nào\nVui lòng quay lại sau!';
+    } else if (_filter == 'flash_sale') {
+      return 'Hiện tại chưa có flash sale nào\nVui lòng quay lại sau!';
+    } else if (_selectedCategory == 'Mới') {
+      return 'Hiện tại chưa có sản phẩm mới nào\nVui lòng quay lại sau!';
+    } else {
+      return 'Không tìm thấy sản phẩm nào\nVui lòng thử danh mục khác';
     }
   }
 }
