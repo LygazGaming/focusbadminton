@@ -390,54 +390,19 @@ class CircularMenuWidget extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(30),
-        splashColor: color.withOpacity(0.3),
-        highlightColor: color.withOpacity(0.1),
+        splashColor: color.withAlpha(75),
+        highlightColor: color.withAlpha(25),
         child: Column(
           children: [
             Container(
               width: 56,
               height: 56,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.2),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white,
-                    Colors.white.withOpacity(0.9),
-                  ],
-                ),
               ),
               child: Stack(
                 children: [
-                  // Hiệu ứng ánh sáng
-                  Positioned(
-                    top: 2,
-                    left: 2,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            Colors.white.withOpacity(0.8),
-                            Colors.white.withOpacity(0.0),
-                          ],
-                          stops: const [0.0, 1.0],
-                        ),
-                      ),
-                    ),
-                  ),
                   // Icon chính
                   Center(
                     child: Icon(
@@ -457,12 +422,12 @@ class CircularMenuWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.red,
                           shape: BoxShape.circle,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Color.fromRGBO(0, 0, 0, 0.2),
                               blurRadius: 2,
                               spreadRadius: 0,
-                              offset: const Offset(0, 1),
+                              offset: Offset(0, 1),
                             ),
                           ],
                           border: Border.all(color: Colors.white, width: 1.5),
@@ -490,12 +455,12 @@ class CircularMenuWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.red,
                           shape: BoxShape.circle,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Color.fromRGBO(0, 0, 0, 0.2),
                               blurRadius: 2,
                               spreadRadius: 0,
-                              offset: const Offset(0, 1),
+                              offset: Offset(0, 1),
                             ),
                           ],
                           border: Border.all(color: Colors.white, width: 1.5),
@@ -523,12 +488,12 @@ class CircularMenuWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.green,
                           shape: BoxShape.circle,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Color.fromRGBO(0, 0, 0, 0.2),
                               blurRadius: 2,
                               spreadRadius: 0,
-                              offset: const Offset(0, 1),
+                              offset: Offset(0, 1),
                             ),
                           ],
                           border: Border.all(color: Colors.white, width: 1.5),
@@ -558,8 +523,8 @@ class CircularMenuWidget extends StatelessWidget {
                 shadows: [
                   Shadow(
                     offset: Offset(0, 1),
-                    blurRadius: 3,
-                    color: Color.fromRGBO(0, 0, 0, 0.3),
+                    blurRadius: 2,
+                    color: Color.fromRGBO(0, 0, 0, 0.5),
                   ),
                 ],
               ),
