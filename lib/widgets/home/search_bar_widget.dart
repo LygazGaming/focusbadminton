@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:focusbadminton/providers/home_screen_provider.dart';
 
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({Key? key}) : super(key: key);
+  const SearchBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomeScreenProvider>(context);
-    
+
     return Container(
       height: 45,
       decoration: BoxDecoration(
@@ -16,11 +16,12 @@ class SearchBarWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(26), // 0.1 opacity
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(color: Colors.blue.shade100, width: 1.5),
       ),
       child: TextField(
         controller: provider.searchController,
@@ -30,21 +31,44 @@ class SearchBarWidget extends StatelessWidget {
         onChanged: (value) {
           provider.setSearchQuery(value);
         },
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
+        ),
         decoration: InputDecoration(
-          hintText: 'Tìm kiếm sản phẩm',
+          hintText: 'Tìm kiếm sản phẩm...',
           hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontStyle: FontStyle.italic,
+            color: Colors.grey[500],
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.blue[900],
-            size: 22,
+          prefixIcon: Container(
+            padding: const EdgeInsets.all(10),
+            child: Icon(
+              Icons.search_rounded,
+              color: Colors.blue[800],
+              size: 20,
+            ),
           ),
           suffixIcon: provider.searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => provider.clearSearch(context),
+              ? Container(
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      color: Colors.grey[600],
+                      size: 16,
+                    ),
+                    onPressed: () => provider.clearSearch(context),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 16,
+                  ),
                 )
               : null,
           border: InputBorder.none,
@@ -52,6 +76,7 @@ class SearchBarWidget extends StatelessWidget {
             horizontal: 15,
             vertical: 12,
           ),
+          isDense: true,
         ),
       ),
     );

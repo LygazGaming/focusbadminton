@@ -106,14 +106,35 @@ class HomeScreenProvider with ChangeNotifier {
   }
 
   // Phương thức mở bản đồ Google Maps với địa chỉ cụ thể
-  Future<void> openMap(String address) async {
-    final Uri googleMapsUrl = Uri.parse(
-        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}');
+  Future<void> openMap(String address, {BuildContext? context}) async {
+    try {
+      final Uri googleMapsUrl = Uri.parse(
+          'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}');
 
-    if (await canLaunchUrl(googleMapsUrl)) {
-      await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
-    } else {
-      debugPrint('Không thể mở bản đồ với địa chỉ: $address');
+      if (await canLaunchUrl(googleMapsUrl)) {
+        await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Không thể mở bản đồ với địa chỉ: $address');
+        _showErrorMessage(context,
+            'Không thể mở bản đồ. Vui lòng kiểm tra ứng dụng bản đồ trên thiết bị của bạn.');
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi mở bản đồ: $e');
+      _showErrorMessage(
+          context, 'Có lỗi xảy ra khi mở bản đồ. Vui lòng thử lại sau.');
+    }
+  }
+
+  // Hiển thị thông báo lỗi
+  void _showErrorMessage(BuildContext? context, String message) {
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 }

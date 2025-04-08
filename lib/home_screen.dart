@@ -12,6 +12,7 @@ import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/screens/cart_screen.dart';
 import 'package:focusbadminton/screens/profile_screen.dart';
 import 'package:focusbadminton/screens/notifications_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +22,61 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Phương thức để mở URL bản đồ
+  Future<void> _launchMapUrl(String address) async {
+    final Uri url = Uri.parse('https://maps.google.com/?q=$address');
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        throw Exception('Không thể mở $url');
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi mở bản đồ: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể mở bản đồ. Vui lòng thử lại sau.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // Phương thức để hiển thị dialog thông tin
+  void _showInfoDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.blue[900]),
+              const SizedBox(width: 8),
+              Text(title),
+            ],
+          ),
+          content: Text(content),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[900],
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -58,74 +114,128 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(width: 12),
                         // Nút theo dõi đơn hàng
-                        GestureDetector(
-                          onTap: () {
-                            // Hiển thị màn hình theo dõi đơn hàng
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Xem đơn hàng của bạn'),
-                                duration: Duration(seconds: 2),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              // Hiển thị thông báo tính năng đang phát triển
+                              _showInfoDialog(
+                                context,
+                                'Theo dõi đơn hàng',
+                                'Tính năng đang được phát triển. Vui lòng quay lại sau!',
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            splashColor: Colors.amber.withAlpha(80),
+                            highlightColor: Colors.amber.withAlpha(40),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.amber.shade300,
+                                    Colors.amber.shade600,
+                                  ],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(50),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            );
-                            // TODO: Thêm màn hình theo dõi đơn hàng
-                            // Navigator.push(context, MaterialPageRoute(
-                            //   builder: (context) => OrderTrackingScreen(),
-                            // ));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withAlpha(51), // 0.2 opacity
-                              shape: BoxShape.circle,
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/icons/box_icon.svg',
-                              height: 24,
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.amber, BlendMode.srcIn),
+                              child: SvgPicture.asset(
+                                'assets/icons/box_icon.svg',
+                                height: 22,
+                                colorFilter: const ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         // Nút hiển thị địa chỉ cửa hàng
-                        GestureDetector(
-                          onTap: () {
-                            // Hiển thị thông tin địa chỉ cửa hàng
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Sân Cầu Lông Focus'),
-                                content: const Text(
-                                    '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Đóng'),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              // Hiển thị thông tin địa chỉ cửa hàng
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      // Mở bản đồ Google Maps
-                                      provider.openMap(
-                                          '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM');
-                                    },
-                                    child: const Text('Chỉ đường'),
+                                  title: Row(
+                                    children: [
+                                      Icon(Icons.location_on,
+                                          color: Colors.blue[900]),
+                                      const SizedBox(width: 8),
+                                      const Text('Sân Cầu Lông Focus'),
+                                    ],
+                                  ),
+                                  content: const Text(
+                                      '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Đóng'),
+                                    ),
+                                    ElevatedButton.icon(
+                                      icon: const Icon(Icons.map),
+                                      label: const Text('Xem bản đồ'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue[900],
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        // Mở bản đồ Google Maps
+                                        _launchMapUrl(
+                                            '18/10 Phan Văn Hớn, Xuân Thới Thượng, Hóc Môn, HCM');
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            splashColor: Colors.blue.withAlpha(80),
+                            highlightColor: Colors.blue.withAlpha(40),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.blue.shade300,
+                                    Colors.blue.shade600,
+                                  ],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(50),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withAlpha(51), // 0.2 opacity
-                              shape: BoxShape.circle,
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/icons/location_icon.svg',
-                              height: 24,
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.amber, BlendMode.srcIn),
+                              child: SvgPicture.asset(
+                                'assets/icons/location_icon.svg',
+                                height: 22,
+                                colorFilter: const ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn),
+                              ),
                             ),
                           ),
                         ),
