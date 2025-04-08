@@ -121,7 +121,7 @@ class CircularMenuWidget extends StatelessWidget {
               Icons.facebook,
               'Facebook',
               'Focus Badminton',
-              () => _launchUrl('https://www.facebook.com'),
+              () => _launchUrl('https://www.facebook.com/LongSeaGamer'),
             ),
             const SizedBox(height: 20),
           ],
