@@ -4,6 +4,7 @@ import 'package:focusbadminton/models/product.dart';
 import 'package:focusbadminton/services/product_service.dart';
 import 'package:focusbadminton/services/cart_service.dart';
 import 'package:focusbadminton/services/favorite_service.dart';
+import 'package:focusbadminton/widgets/product/review_section_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
@@ -453,6 +454,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
+
                   // Specifications
                   const Text(
                     'Thông số kỹ thuật',
@@ -481,6 +483,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ],
                         ),
                       )),
+
+                  const SizedBox(height: 24),
+
+                  // Đánh giá sản phẩm
+                  const Divider(),
+                  const Text(
+                    'Đánh giá từ khách hàng',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ReviewSectionWidget(productId: product.id),
                 ],
               ),
             ),

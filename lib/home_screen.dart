@@ -10,7 +10,6 @@ import 'package:focusbadminton/widgets/home/brands_widget.dart';
 import 'package:focusbadminton/widgets/home/search_results_widget.dart';
 import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/screens/cart_screen.dart';
-import 'package:focusbadminton/screens/notification_screen.dart';
 import 'package:focusbadminton/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -126,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                const NotificationScreen(),
                 const CartScreen(),
                 const ProfileScreen(),
               ],
