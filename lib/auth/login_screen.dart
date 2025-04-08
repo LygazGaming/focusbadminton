@@ -68,7 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
           _showError("Vui lòng xác thực email trước khi đăng nhập");
           return;
         }
-        Navigator.pushReplacementNamed(context, '/home');
+        // Xóa toàn bộ navigation stack và chuyển đến màn hình chính
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
       }
     } on AuthException catch (e) {
       _showError(e.message);
@@ -98,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (userCredential?.user != null) {
         log('Đăng nhập Google thành công: ${userCredential!.user?.email}');
-        Navigator.pushReplacementNamed(context, '/home');
+        // Xóa toàn bộ navigation stack và chuyển đến màn hình chính
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
       }
     } on AuthException catch (e) {
       log('Lỗi đăng nhập Google: ${e.message}');

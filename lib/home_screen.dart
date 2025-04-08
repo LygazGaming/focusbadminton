@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: AppBar(
                 backgroundColor: Colors.blue[900],
                 elevation: 0,
+                automaticallyImplyLeading: false, // Tắt nút back tự động
                 flexibleSpace: SafeArea(
                   child: Padding(
                     padding:
