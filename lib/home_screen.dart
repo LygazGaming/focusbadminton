@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return Scaffold(
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(70),
+              preferredSize: const Size.fromHeight(90),
               child: AppBar(
                 backgroundColor: Colors.blue[900],
                 elevation: 0,
@@ -98,16 +98,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 flexibleSpace: SafeArea(
                   child: Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Row(
                       children: [
                         // Logo
-                        Image.asset(
-                          'assets/images/logo.png',
-                          height: 45,
-                          fit: BoxFit.contain,
+                        Container(
+                          constraints: const BoxConstraints(
+                            minWidth: 150,
+                            maxWidth: 180,
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 4),
                         // Search bar
                         const Expanded(
                           child: SearchBarWidget(),
