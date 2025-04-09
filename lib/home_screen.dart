@@ -10,7 +10,7 @@ import 'package:focusbadminton/widgets/home/search_results_widget.dart';
 import 'package:focusbadminton/screens/category_screen.dart';
 import 'package:focusbadminton/screens/cart_screen.dart';
 import 'package:focusbadminton/screens/profile_screen.dart';
-import 'package:focusbadminton/screens/notifications_screen.dart';
+import 'package:focusbadminton/screens/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     // Tab thông báo
-                    const NotificationsScreen(),
+                    const NotificationScreen(),
                     // Tab giỏ hàng
                     const CartScreen(),
                     // Tab tài khoản

@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Notification {
+class NotificationModel {
   final String id;
   final String title;
   final String message;
   final String? imageUrl;
   final DateTime createdAt;
   final bool isRead;
-  final String? type; // 'order', 'promotion', 'system', etc.
+  final String? type;
 
-  Notification({
+  NotificationModel({
     required this.id,
     required this.title,
     required this.message,
@@ -19,8 +19,8 @@ class Notification {
     this.type,
   });
 
-  factory Notification.fromMap(Map<String, dynamic> map, String id) {
-    return Notification(
+  factory NotificationModel.fromMap(Map<String, dynamic> map, String id) {
+    return NotificationModel(
       id: id,
       title: map['title'] ?? '',
       message: map['message'] ?? '',
@@ -42,7 +42,7 @@ class Notification {
     };
   }
 
-  Notification copyWith({
+  NotificationModel copyWith({
     String? title,
     String? message,
     String? imageUrl,
@@ -50,7 +50,7 @@ class Notification {
     bool? isRead,
     String? type,
   }) {
-    return Notification(
+    return NotificationModel(
       id: id,
       title: title ?? this.title,
       message: message ?? this.message,

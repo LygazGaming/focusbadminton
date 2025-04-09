@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focusbadminton/services/payment_service.dart';
 import 'package:focusbadminton/services/cart_service.dart';
+import 'package:focusbadminton/services/notification_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -410,6 +411,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           'status': 'processing', // Trạng thái đang xử lý
           'paymentStatus': 'pending', // Chưa thanh toán
         });
+
+        // Tạo thông báo cho người dùng
+        final notificationService = NotificationService();
+        await notificationService.createNotification(
+          title: 'Đơn hàng đã được xác nhận',
+          message:
+              'Đơn hàng #$orderId của bạn đã được xác nhận và đang được xử lý. Chúng tôi sẽ giao hàng đến bạn trong thời gian sớm nhất.',
+          type: 'order',
+        );
 
         // Xóa giỏ hàng
         await _cartService.clearCart();

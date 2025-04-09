@@ -7,7 +7,7 @@ class NotificationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Lấy stream thông báo của user hiện tại
-  Stream<List<Notification>> getUserNotifications() {
+  Stream<List<NotificationModel>> getUserNotifications() {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return Stream.value([]);
 
@@ -19,7 +19,7 @@ class NotificationService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Notification.fromMap(doc.data(), doc.id))
+          .map((doc) => NotificationModel.fromMap(doc.data(), doc.id))
           .toList();
     });
   }
